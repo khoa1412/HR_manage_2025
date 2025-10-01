@@ -21,7 +21,9 @@ import {
   Gift
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { listEmployees, listDepartments, deleteEmployee, upsertEmployee } from '../services/api'
+import { deleteEmployee as delEmp } from '../services/employees.api'
+import { listEmployees as beListEmployees, createEmployee as beCreateEmployee, updateEmployee as beUpdateEmployee } from '../services/employees.api'
+import { listDepartments } from '../services/api'
 import EmployeeForm from '../components/EmployeeForm'
 import BulkActions from '../components/BulkActions'
 import StatusBadge from '../components/StatusBadge'
@@ -59,12 +61,13 @@ export default function EmployeeManagement() {
     try {
       setLoading(true)
       const [employeesData, departmentsData] = await Promise.all([
-        listEmployees(),
+        beListEmployees({ page: 1, pageSize: 100 }),
         listDepartments()
       ])
       
       // Seed sample employees if none exist
-      if (employeesData.length === 0) {
+      const rows = employeesData?.data || employeesData || []
+      if (rows.length === 0) {
         const sampleEmployees = [
           {
             id: '1',
@@ -92,7 +95,7 @@ export default function EmployeeManagement() {
         localStorage.setItem('employees', JSON.stringify(sampleEmployees))
         setEmployees(sampleEmployees)
       } else {
-        setEmployees(employeesData)
+        setEmployees(rows)
       }
       
       setDepartments(departmentsData)
@@ -106,7 +109,7 @@ export default function EmployeeManagement() {
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) {
       try {
-        await deleteEmployee(id)
+        await delEmp(id)
         setEmployees(employees.filter(emp => emp.id !== id)) // Update state directly
       } catch (error) {
         console.error('Error deleting employee:', error)
@@ -127,9 +130,73 @@ export default function EmployeeManagement() {
 
   const handleSave = async (formData) => {
     try {
-      const savedEmployee = await upsertEmployee(
-        editingEmployee ? { ...formData, id: editingEmployee.id } : formData
-      )
+      // Map frontend form data to backend DTO format
+      const mappedData = {
+        // Thông tin cơ bản
+        employeeCode: formData.employeeCode || `EMP${Date.now()}`,
+        fullName: formData.fullName,
+        email: formData.personalEmail || formData.email,
+        phone: formData.personalPhone || formData.phone,
+        dob: formData.birthDate,
+        birthPlace: formData.birthPlace,
+        gender: formData.gender,
+        cccdNumber: formData.cccdNumber,
+        cccdIssueDate: formData.cccdIssueDate,
+        cccdIssuePlace: formData.cccdIssuePlace,
+        maritalStatus: formData.maritalStatus,
+        
+        // Thông tin liên hệ
+        personalPhone: formData.personalPhone,
+        personalEmail: formData.personalEmail,
+        temporaryAddress: formData.temporaryAddress,
+        permanentAddress: formData.permanentAddress,
+        
+        // Thông tin liên hệ khẩn cấp
+        emergencyContactName: formData.emergencyContactName,
+        emergencyContactRelation: formData.emergencyContactRelation,
+        emergencyContactPhone: formData.emergencyContactPhone,
+        
+        // Thông tin học vấn
+        highestDegree: formData.highestDegree,
+        university: formData.university,
+        major: formData.major,
+        otherCertificates: formData.otherCertificates,
+        languages: formData.languages,
+        languageLevel: formData.languageLevel,
+        
+        // Thông tin Thuế - BHXH
+        socialInsuranceCode: formData.socialInsuranceCode,
+        taxCode: formData.taxCode,
+        
+        // Thông tin công việc
+        department: formData.department,
+        position: formData.position,
+        level: formData.level,
+        title: formData.title,
+        contractType: formData.contractType,
+        startDate: formData.startDate,
+        contractDuration: formData.contractDuration,
+        endDate: formData.endDate,
+        probationSalary: formData.probationSalary,
+        officialSalary: formData.officialSalary,
+        
+        // Phúc lợi
+        fuelAllowance: formData.fuelAllowance,
+        mealAllowance: formData.mealAllowance,
+        transportAllowance: formData.transportAllowance,
+        uniformAllowance: formData.uniformAllowance,
+        performanceBonus: formData.performanceBonus,
+        
+        // Thông tin hệ thống
+        status: formData.status || 'Probation',
+        hireDate: formData.startDate,
+        joinDate: formData.startDate
+      }
+
+      const savedEmployee = editingEmployee
+        ? await beUpdateEmployee(editingEmployee.id, mappedData)
+        : await beCreateEmployee(mappedData)
+        
       if (editingEmployee) {
         // Update existing employee in the list
         setEmployees(employees.map(emp => emp.id === savedEmployee.id ? savedEmployee : emp))

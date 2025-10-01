@@ -80,7 +80,7 @@ npm run dev
 ```
 
 ### Ứng dụng sẽ chạy tại:
-- **URL**: http://localhost:3000 (hoặc cổng khác nếu 3000 đã được sử dụng)
+- **URL**: http://localhost:8386 (hoặc cổng khác nếu 8386 đã được sử dụng)
 - **Build**: `npm run build`
 - **Preview**: `npm run preview`
 

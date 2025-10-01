@@ -4,7 +4,7 @@
 
 ### 🔐 Đăng nhập
 
-1. **Truy cập URL**: `http://localhost:3000/login` (hoặc cổng tương ứng khi triển khai).
+1. **Truy cập URL**: `http://localhost:8386/login` (hoặc cổng tương ứng khi triển khai).
 2. **Sử dụng tài khoản demo**:
    - **Admin/HR**:
      - **Email**: `admin@company.com`

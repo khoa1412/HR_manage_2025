@@ -29,7 +29,7 @@ Cập nhật: 2025-09-03
 
 - vite.config.js
   - Plugin: `react()`.
-  - server: `port: 3000`, `open: true`. (Dev thực tế đã chạy ở 3002 nếu 3000 bận.)
+  - server: `port: 8386`, `open: true`. (Dev thực tế đã chạy ở 8386.)
 
 - tailwind.config.js
   - `content`: `./index.html`, `./src/**/*.{js,ts,jsx,tsx}`.

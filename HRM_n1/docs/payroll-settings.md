@@ -12,7 +12,7 @@ Module này cho phép phòng Nhân sự định cấu hình các tham số tính
 ## 🧭 Cách truy cập
 
 1. **Từ thanh điều hướng (sidebar)**: Nhấn vào mục "Lương thưởng".
-2. **URL trực tiếp**: `http://localhost:3000/payroll`.
+2. **URL trực tiếp**: `http://localhost:8386/payroll`.
 
 ## 📱 Giao diện và Chức năng
 

@@ -1,6 +1,32 @@
 // API Service Layer Functions để tương tác với backend
 import { compareObjects, logMultipleChanges } from './changeHistory'
 
+// API Base URL
+const API_BASE_URL = 'http://localhost:8300/api'
+
+// Helper function for API calls
+async function apiCall(endpoint, options = {}) {
+  try {
+    const url = `${API_BASE_URL}${endpoint}`
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error(`API call failed for ${endpoint}:`, error)
+    throw error
+  }
+}
+
 // Authentication
 export function getCurrentUserId() {
   if (typeof window === 'undefined') return null
@@ -25,6 +51,17 @@ export function setIsHR(v) {
 // Employee Management
 export async function listEmployees(filter = {}) {
   try {
+    // Try to fetch from backend first
+    const queryParams = new URLSearchParams()
+    if (filter.q) queryParams.append('search', filter.q)
+    if (filter.department) queryParams.append('department', filter.department)
+    if (filter.status) queryParams.append('status', filter.status)
+    
+    const endpoint = `/employees${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
+    return await apiCall(endpoint)
+  } catch (error) {
+    console.error('Error listing employees from backend, falling back to localStorage:', error)
+    // Fallback to localStorage
     const employees = JSON.parse(localStorage.getItem('employees') || '[]')
     
     // Apply filters
@@ -44,14 +81,51 @@ export async function listEmployees(filter = {}) {
     }
     
     return filtered
-  } catch (error) {
-    console.error('Error listing employees:', error)
-    return []
   }
 }
 
 export async function upsertEmployee(input) {
   try {
+    const currentUserId = getCurrentUserId()
+    
+    if (input.id) {
+      // Update existing employee
+      const endpoint = `/employees/${input.id}`
+      const result = await apiCall(endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(input)
+      })
+      
+      // Log changes
+      logMultipleChanges(
+        input.id, 
+        [{ field: 'updated', oldValue: '', newValue: 'Cập nhật thông tin nhân viên' }], 
+        currentUserId || 'system',
+        'Cập nhật thông tin nhân viên'
+      )
+      
+      return result
+    } else {
+      // Create new employee
+      const endpoint = '/employees'
+      const result = await apiCall(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(input)
+      })
+      
+      // Log creation
+      logMultipleChanges(
+        result.id,
+        [{ field: 'created', oldValue: '', newValue: 'Tạo hồ sơ nhân viên mới' }],
+        currentUserId || 'system',
+        'Tạo nhân viên mới'
+      )
+      
+      return result
+    }
+  } catch (error) {
+    console.error('Error upserting employee to backend, falling back to localStorage:', error)
+    // Fallback to localStorage
     const employees = JSON.parse(localStorage.getItem('employees') || '[]')
     const currentUserId = getCurrentUserId()
     
@@ -97,25 +171,33 @@ export async function upsertEmployee(input) {
     )
     
     return newEmployee
-  } catch (error) {
-    console.error('Error upserting employee:', error)
-    throw error
   }
 }
 
 export async function deleteEmployee(id) {
   try {
+    const endpoint = `/employees/${id}`
+    await apiCall(endpoint, {
+      method: 'DELETE'
+    })
+    return true
+  } catch (error) {
+    console.error('Error deleting employee from backend, falling back to localStorage:', error)
+    // Fallback to localStorage
     const employees = JSON.parse(localStorage.getItem('employees') || '[]')
     const filtered = employees.filter(emp => emp.id !== id)
     localStorage.setItem('employees', JSON.stringify(filtered))
-  } catch (error) {
-    console.error('Error deleting employee:', error)
-    throw error
+    return true
   }
 }
 
 export async function getEmployee(id) {
   try {
+    const endpoint = `/employees/${id}`
+    return await apiCall(endpoint)
+  } catch (error) {
+    console.error('Error getting employee from backend, falling back to localStorage:', error)
+    // Fallback to localStorage
     let employees = JSON.parse(localStorage.getItem('employees') || '[]')
     
     // Seed sample employees if none exist
@@ -151,9 +233,6 @@ export async function getEmployee(id) {
     }
     
     return employees.find(emp => emp.id === id)
-  } catch (error) {
-    console.error('Error getting employee:', error)
-    return undefined
   }
 }
 
