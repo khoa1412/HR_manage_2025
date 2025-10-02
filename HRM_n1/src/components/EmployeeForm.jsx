@@ -327,75 +327,7 @@ export default function EmployeeForm({ employee, onSave, onCancel }) {
     return map[field] || 'personal'
   }
 
-  // Validate only the current tab fields for partial save
-  const validateCurrentTab = async () => {
-    const tab = activeTab
-    const tabErrors = {}
-    const addErr = (field, msg) => { tabErrors[field] = msg }
 
-    if (tab === 'personal') {
-      if (!formData.fullName.trim()) addErr('fullName', 'Họ và tên là bắt buộc')
-      if (!formData.birthDate) addErr('birthDate', 'Ngày sinh là bắt buộc')
-      if (!formData.gender) addErr('gender', 'Giới tính là bắt buộc')
-      if (!formData.cccdNumber.trim()) {
-        addErr('cccdNumber', 'Số CCCD là bắt buộc')
-      } else if (!/^[0-9]{12}$/.test(formData.cccdNumber.replace(/\s/g, ''))) {
-        addErr('cccdNumber', 'Số CCCD phải có 12 chữ số')
-      }
-      if (!formData.cccdIssueDate) addErr('cccdIssueDate', 'Ngày cấp CCCD là bắt buộc')
-      if (!formData.cccdIssuePlace.trim()) addErr('cccdIssuePlace', 'Nơi cấp CCCD là bắt buộc')
-    } else if (tab === 'contact') {
-      if (!formData.personalPhone.trim()) {
-        addErr('personalPhone', 'Số điện thoại cá nhân là bắt buộc')
-      } else if (!/^[0-9]{10,11}$/.test(formData.personalPhone.replace(/\s/g, ''))) {
-        addErr('personalPhone', 'Số điện thoại không hợp lệ')
-      }
-      if (!formData.personalEmail.trim()) {
-        addErr('personalEmail', 'Email cá nhân là bắt buộc')
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.personalEmail)) {
-        addErr('personalEmail', 'Email không hợp lệ')
-      }
-      if (!formData.temporaryAddress.trim()) addErr('temporaryAddress', 'Địa chỉ tạm trú là bắt buộc')
-      if (!formData.permanentAddress.trim()) addErr('permanentAddress', 'Địa chỉ thường trú là bắt buộc')
-    } else if (tab === 'emergency') {
-      if (!formData.emergencyContactName.trim()) addErr('emergencyContactName', 'Họ tên người liên hệ khẩn cấp là bắt buộc')
-      if (!formData.emergencyContactPhone.trim()) {
-        addErr('emergencyContactPhone', 'SĐT người liên hệ khẩn cấp là bắt buộc')
-      } else if (!/^[0-9]{10,11}$/.test(formData.emergencyContactPhone.replace(/\s/g, ''))) {
-        addErr('emergencyContactPhone', 'Số điện thoại không hợp lệ')
-      }
-    } else if (tab === 'work') {
-      if (!formData.department.trim()) addErr('department', 'Phòng ban là bắt buộc')
-      if (!formData.position.trim()) addErr('position', 'Vị trí công việc là bắt buộc')
-      if (!formData.contractType) addErr('contractType', 'Loại hợp đồng là bắt buộc')
-      if (!formData.startDate) addErr('startDate', 'Ngày bắt đầu là bắt buộc')
-      if (!formData.contractDuration) addErr('contractDuration', 'Thời gian hợp đồng là bắt buộc')
-    }
-
-    setErrors(prev => ({ ...prev, ...tabErrors }))
-    return Object.keys(tabErrors).length === 0
-  }
-
-  const handleSaveAndNext = async () => {
-    const ok = await validateCurrentTab()
-    if (!ok) return
-    setLoading(true)
-    try {
-      const saved = await onSave(formData)
-      if (saved) {
-        setCurrentEmployee(saved)
-        const current = tabs.find(t => t.id === activeTab)
-        setNotice(`Đã lưu "${current?.name || ''}" thành công`)
-        setTimeout(() => setNotice(''), 2500)
-        // Keep current tab as requested
-      }
-    } catch (e) {
-      console.error('Error partial-saving employee:', e)
-      alert('Có lỗi xảy ra khi lưu thông tin mục hiện tại')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleChange = (field, value) => {
     setFormData(prev => ({
@@ -420,9 +352,18 @@ export default function EmployeeForm({ employee, onSave, onCancel }) {
       // Jump to the first tab that contains an error so user can see and fix it
       const firstErrorField = Object.keys(newErrors)[0]
       const targetTab = firstErrorField ? getTabForField(firstErrorField) : activeTab
+      const errorCount = Object.keys(newErrors).length
+      const tabName = tabs.find(t => t.id === targetTab)?.name || 'này'
+      
       setActiveTab(targetTab)
-      setNotice('Vui lòng hoàn thiện các trường bắt buộc trong tab này')
-      setTimeout(() => setNotice(''), 2500)
+      setNotice(`⚠️ Còn ${errorCount} trường chưa hợp lệ trong tab "${tabName}". Vui lòng kiểm tra và điền đầy đủ thông tin.`)
+      setTimeout(() => setNotice(''), 4000)
+      
+      // Show detailed alert for better user experience
+      const errorMessages = Object.entries(newErrors).slice(0, 5).map(([field, message]) => `• ${message}`).join('\n')
+      const moreErrors = errorCount > 5 ? `\n... và ${errorCount - 5} lỗi khác` : ''
+      alert(`❌ Không thể lưu nhân viên!\n\nCác lỗi cần sửa:\n${errorMessages}${moreErrors}\n\n✅ Hệ thống đã chuyển đến tab "${tabName}" để bạn sửa lỗi.`)
+      
       return
     }
 
@@ -493,9 +434,13 @@ export default function EmployeeForm({ employee, onSave, onCancel }) {
           </nav>
         </div>
 
-        {/* Success Notice */}
+        {/* Notice */}
         {notice && (
-          <div className="mx-6 mt-4 mb-0 p-3 rounded bg-green-50 text-green-800 border border-green-200 text-sm">
+          <div className={`mx-6 mt-4 mb-0 p-3 rounded text-sm ${
+            notice.includes('⚠️') 
+              ? 'bg-yellow-50 text-yellow-800 border border-yellow-200' 
+              : 'bg-green-50 text-green-800 border border-green-200'
+          }`}>
             {notice}
           </div>
         )}
@@ -535,15 +480,6 @@ export default function EmployeeForm({ employee, onSave, onCancel }) {
                 title="Hủy và đóng"
               >
                 Hủy
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveAndNext}
-                className="btn-outline"
-                disabled={loading}
-                title="Lưu mục hiện tại và giữ nguyên tab"
-              >
-                {loading ? 'Đang lưu...' : 'Lưu & Tiếp tục'}
               </button>
               <button
                 type="submit"

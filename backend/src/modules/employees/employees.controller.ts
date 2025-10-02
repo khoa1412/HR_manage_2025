@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { SelfOrRoleGuard } from '../../auth/guards/self-or-role.guard';
-import { DbExceptionFilter } from './filters/db-exception.filter';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { QueryEmployeeDto } from './dto/query-employee.dto';
@@ -11,7 +10,6 @@ import { CreateBenefitDto } from './dto/create-benefit.dto';
 
 @Controller('employees')
 // @UseGuards(SelfOrRoleGuard)
-@UseFilters(DbExceptionFilter)
 export class EmployeesController {
   constructor(private readonly service: EmployeesService) {}
 

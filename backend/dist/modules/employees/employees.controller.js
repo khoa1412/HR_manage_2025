@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmployeesController = void 0;
 const common_1 = require("@nestjs/common");
 const employees_service_1 = require("./employees.service");
-const db_exception_filter_1 = require("./filters/db-exception.filter");
 const create_employee_dto_1 = require("./dto/create-employee.dto");
 const update_employee_dto_1 = require("./dto/update-employee.dto");
 const query_employee_dto_1 = require("./dto/query-employee.dto");
@@ -116,6 +115,7 @@ let EmployeesController = class EmployeesController {
         return this.service.deleteDocument(id, docId);
     }
 };
+exports.EmployeesController = EmployeesController;
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
@@ -317,10 +317,8 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], EmployeesController.prototype, "deleteDocument", null);
-EmployeesController = __decorate([
+exports.EmployeesController = EmployeesController = __decorate([
     (0, common_1.Controller)('employees'),
-    (0, common_1.UseFilters)(db_exception_filter_1.DbExceptionFilter),
     __metadata("design:paramtypes", [employees_service_1.EmployeesService])
 ], EmployeesController);
-exports.EmployeesController = EmployeesController;
 //# sourceMappingURL=employees.controller.js.map

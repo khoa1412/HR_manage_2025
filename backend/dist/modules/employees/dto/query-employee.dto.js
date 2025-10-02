@@ -18,6 +18,7 @@ class QueryEmployeeDto {
         this.pageSize = 20;
     }
 }
+exports.QueryEmployeeDto = QueryEmployeeDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
@@ -71,5 +72,4 @@ __decorate([
     (0, class_validator_1.Matches)(/^([\w.]+:(asc|desc))(,([\w.]+:(asc|desc)))*$/),
     __metadata("design:type", String)
 ], QueryEmployeeDto.prototype, "sort", void 0);
-exports.QueryEmployeeDto = QueryEmployeeDto;
 //# sourceMappingURL=query-employee.dto.js.map

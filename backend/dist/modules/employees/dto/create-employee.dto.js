@@ -13,6 +13,7 @@ exports.CreateEmployeeDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateEmployeeDto {
 }
+exports.CreateEmployeeDto = CreateEmployeeDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
@@ -237,5 +238,4 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateEmployeeDto.prototype, "departmentId", void 0);
-exports.CreateEmployeeDto = CreateEmployeeDto;
 //# sourceMappingURL=create-employee.dto.js.map

@@ -1,3 +1,8 @@
+-- normalized to UTF-8; safe for psql on Windows
+\encoding UTF8
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+
 -- ============================================================
 -- Employee Database Structure
 -- HR Management System - Employee Module

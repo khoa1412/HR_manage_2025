@@ -13,6 +13,7 @@ exports.CreateSalaryDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateSalaryDto {
 }
+exports.CreateSalaryDto = CreateSalaryDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
@@ -31,5 +32,4 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateSalaryDto.prototype, "notes", void 0);
-exports.CreateSalaryDto = CreateSalaryDto;
 //# sourceMappingURL=create-salary.dto.js.map

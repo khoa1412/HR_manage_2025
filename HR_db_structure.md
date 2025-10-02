@@ -33,9 +33,10 @@ id | staff_code | cccd | date_issue | place_issue | image_front_cccd | image_bac
     cccd VARCHAR(20) UNIQUE NOT NULL,
     date_issue DATE,
     place_issue VARCHAR(100),
-    image_front_cccd BYTEA,
-    image_back_cccd BYTEA
+    image_front_cccd TEXT,
+    image_back_cccd TEXT
 --
+** lưu ý  : image_back_cccd, image_front_cccd TEXT là url đường dẫn chứ không phải text thông thường **
 
 #Table contact:
 id | staff_code | temp_address | permant_address
@@ -81,6 +82,7 @@ id| staff_code | degree | institution | major | year | attachment_image
     year INT CHECK (year >= 1900),
     attachment_image TEXT
 --
+** lưu ý  : attachment_image  TEXT là url đường dẫn chứ không phải text thông thường **
 
 #Table certifications:
 id | staff_code | language | level | score | attachment_image | issue_at | expires_at
@@ -129,11 +131,11 @@ id | staff_code | leave_day | items_employee | items_company | social_insuran_de
     items_employee TEXT,
     items_company TEXT,
     social_insuran_detach TEXT,
-    terminate_decision BYTEA,
-    tax_withhold_paper BYTEA
+    terminate_decision TEXT,
+    tax_withhold_paper TEXT
 --
 
-** lưu ý  : social_insuran_detach TEXT là url đường dẫn chứ không phải text thông thường **
+** lưu ý  : social_insuran_detach, terminate_decision, tax_withhold_paper  TEXT là url đường dẫn chứ không phải text thông thường **
 #Table contract:
 id | staff_code | contract_type | start_date | end_date
 

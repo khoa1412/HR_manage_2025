@@ -31,7 +31,12 @@ export default function Departments() {
         listEmployees()
       ])
       setDepartments(departmentsData)
-      setEmployees(employeesData)
+      
+      // Handle both array and object response formats
+      const employeesArray = Array.isArray(employeesData) 
+        ? employeesData 
+        : employeesData?.items || employeesData?.data || []
+      setEmployees(employeesArray)
     } catch (error) {
       console.error('Error loading data:', error)
     } finally {
@@ -76,6 +81,10 @@ export default function Departments() {
   }
 
   const getDepartmentEmployeeCount = (departmentName) => {
+    if (!Array.isArray(employees)) {
+      console.warn('Employees data is not an array:', employees)
+      return 0
+    }
     return employees.filter(emp => emp.department === departmentName).length
   }
 

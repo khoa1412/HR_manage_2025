@@ -9,10 +9,21 @@ export declare class EmployeesController {
     private readonly service;
     constructor(service: EmployeesService);
     list(query: QueryEmployeeDto): Promise<{
-        data: any[];
+        items: {
+            id: string;
+            employeeCode: string;
+            fullName: string;
+            email: string;
+            phone: string;
+            joinDate: Date;
+            status: import("generated/prisma").$Enums.employment_status_enum;
+            department: string;
+            position: string;
+        }[];
+        total: number;
         page: any;
         pageSize: any;
-        total: number;
+        totalPages: number;
     }>;
     me(req: any): Promise<{
         id: string;
@@ -26,49 +37,332 @@ export declare class EmployeesController {
         status: string;
         officialSalary: number;
     }>;
-    get(id: string): Promise<any>;
-    create(dto: CreateEmployeeDto): Promise<any>;
-    update(id: string, dto: UpdateEmployeeDto): Promise<any>;
-    remove(id: string): Promise<any>;
+    get(id: string): Promise<{
+        id: string;
+        employeeCode: string;
+        fullName: string;
+        email: string;
+        phone: string;
+        dob: Date;
+        birthPlace: string;
+        gender: string;
+        cccdNumber: string;
+        cccdIssueDate: Date;
+        cccdIssuePlace: string;
+        maritalStatus: string;
+        personalPhone: string;
+        personalEmail: string;
+        temporaryAddress: string;
+        permanentAddress: string;
+        emergencyContactName: string;
+        emergencyContactRelation: string;
+        emergencyContactPhone: string;
+        highestDegree: string;
+        university: string;
+        major: string;
+        otherCertificates: string;
+        languages: string;
+        languageLevel: string;
+        socialInsuranceCode: string;
+        taxCode: string;
+        department: string;
+        position: string;
+        level: string;
+        title: string;
+        contractType: string;
+        startDate: Date;
+        contractDuration: string;
+        endDate: Date;
+        probationSalary: import("generated/prisma/runtime/library").Decimal;
+        officialSalary: import("generated/prisma/runtime/library").Decimal;
+        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
+        mealAllowance: import("generated/prisma/runtime/library").Decimal;
+        transportAllowance: import("generated/prisma/runtime/library").Decimal;
+        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
+        performanceBonus: import("generated/prisma/runtime/library").Decimal;
+        hireDate: Date;
+        joinDate: Date;
+        status: import("generated/prisma").$Enums.employment_status_enum;
+        departmentId: string;
+        benefits: {
+            id: string;
+            type: string;
+            amount: import("generated/prisma/runtime/library").Decimal;
+            startDate: Date;
+            endDate: Date;
+            isActive: boolean;
+            notes: string;
+        }[];
+        contacts: {
+            id: string;
+            contactName: string;
+            relationship: string;
+            phone: string;
+        }[];
+        documents: {
+            id: string;
+            docType: string;
+            filePath: string;
+            issueDate: Date;
+            expiryDate: Date;
+        }[];
+    }>;
+    create(dto: CreateEmployeeDto): Promise<{
+        id: string;
+        employeeCode: string;
+        fullName: string;
+        email: string;
+        phone: string;
+        dob: Date;
+        birthPlace: string;
+        gender: string;
+        cccdNumber: string;
+        cccdIssueDate: Date;
+        cccdIssuePlace: string;
+        maritalStatus: string;
+        personalPhone: string;
+        personalEmail: string;
+        temporaryAddress: string;
+        permanentAddress: string;
+        emergencyContactName: string;
+        emergencyContactRelation: string;
+        emergencyContactPhone: string;
+        highestDegree: string;
+        university: string;
+        major: string;
+        otherCertificates: string;
+        languages: string;
+        languageLevel: string;
+        socialInsuranceCode: string;
+        taxCode: string;
+        department: string;
+        position: string;
+        level: string;
+        title: string;
+        contractType: string;
+        startDate: Date;
+        contractDuration: string;
+        endDate: Date;
+        probationSalary: import("generated/prisma/runtime/library").Decimal;
+        officialSalary: import("generated/prisma/runtime/library").Decimal;
+        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
+        mealAllowance: import("generated/prisma/runtime/library").Decimal;
+        transportAllowance: import("generated/prisma/runtime/library").Decimal;
+        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
+        performanceBonus: import("generated/prisma/runtime/library").Decimal;
+        hireDate: Date;
+        joinDate: Date;
+        status: import("generated/prisma").$Enums.employment_status_enum;
+        departmentId: string;
+        benefits: {
+            id: string;
+            type: string;
+            amount: import("generated/prisma/runtime/library").Decimal;
+            startDate: Date;
+            endDate: Date;
+            isActive: boolean;
+            notes: string;
+        }[];
+        contacts: {
+            id: string;
+            contactName: string;
+            relationship: string;
+            phone: string;
+        }[];
+        documents: {
+            id: string;
+            docType: string;
+            filePath: string;
+            issueDate: Date;
+            expiryDate: Date;
+        }[];
+    }>;
+    update(id: string, dto: UpdateEmployeeDto): Promise<{
+        id: string;
+        employeeCode: string;
+        fullName: string;
+        email: string;
+        phone: string;
+        dob: Date;
+        birthPlace: string;
+        gender: string;
+        cccdNumber: string;
+        cccdIssueDate: Date;
+        cccdIssuePlace: string;
+        maritalStatus: string;
+        personalPhone: string;
+        personalEmail: string;
+        temporaryAddress: string;
+        permanentAddress: string;
+        emergencyContactName: string;
+        emergencyContactRelation: string;
+        emergencyContactPhone: string;
+        highestDegree: string;
+        university: string;
+        major: string;
+        otherCertificates: string;
+        languages: string;
+        languageLevel: string;
+        socialInsuranceCode: string;
+        taxCode: string;
+        department: string;
+        position: string;
+        level: string;
+        title: string;
+        contractType: string;
+        startDate: Date;
+        contractDuration: string;
+        endDate: Date;
+        probationSalary: import("generated/prisma/runtime/library").Decimal;
+        officialSalary: import("generated/prisma/runtime/library").Decimal;
+        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
+        mealAllowance: import("generated/prisma/runtime/library").Decimal;
+        transportAllowance: import("generated/prisma/runtime/library").Decimal;
+        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
+        performanceBonus: import("generated/prisma/runtime/library").Decimal;
+        hireDate: Date;
+        joinDate: Date;
+        status: import("generated/prisma").$Enums.employment_status_enum;
+        departmentId: string;
+        benefits: {
+            id: string;
+            type: string;
+            amount: import("generated/prisma/runtime/library").Decimal;
+            startDate: Date;
+            endDate: Date;
+            isActive: boolean;
+            notes: string;
+        }[];
+        contacts: {
+            id: string;
+            contactName: string;
+            relationship: string;
+            phone: string;
+        }[];
+        documents: {
+            id: string;
+            docType: string;
+            filePath: string;
+            issueDate: Date;
+            expiryDate: Date;
+        }[];
+    }>;
+    remove(id: string): Promise<{
+        success: boolean;
+    }>;
     terminate(id: string, body: {
         date: string;
         reason?: string;
-    }): Promise<any>;
-    listPositions(id: string, activeOnly?: string): Promise<any>;
-    addPosition(id: string, dto: CreatePositionDto): Promise<any>;
-    updatePosition(id: string, positionId: string, dto: CreatePositionDto): Promise<any>;
+    }): Promise<{
+        success: boolean;
+    }>;
+    listPositions(id: string, activeOnly?: string): Promise<any[]>;
+    addPosition(id: string, dto: CreatePositionDto): Promise<{
+        success: boolean;
+    }>;
+    updatePosition(id: string, positionId: string, dto: CreatePositionDto): Promise<{
+        success: boolean;
+    }>;
     deletePosition(id: string, positionId: string): Promise<{
         success: boolean;
     }>;
-    listSalaries(id: string): Promise<any>;
-    currentSalary(id: string): Promise<any>;
-    addSalary(id: string, dto: CreateSalaryDto): Promise<any>;
-    updateSalary(id: string, salaryId: string, dto: CreateSalaryDto): Promise<any>;
+    listSalaries(id: string): Promise<{
+        id: string;
+        baseSalary: import("generated/prisma/runtime/library").Decimal;
+        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
+        mealAllowance: import("generated/prisma/runtime/library").Decimal;
+        transportAllowance: import("generated/prisma/runtime/library").Decimal;
+        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
+        performanceBonus: import("generated/prisma/runtime/library").Decimal;
+        effectiveDate: Date;
+        isActive: boolean;
+    }[]>;
+    currentSalary(id: string): Promise<{
+        id: string;
+        baseSalary: import("generated/prisma/runtime/library").Decimal;
+        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
+        mealAllowance: import("generated/prisma/runtime/library").Decimal;
+        transportAllowance: import("generated/prisma/runtime/library").Decimal;
+        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
+        performanceBonus: import("generated/prisma/runtime/library").Decimal;
+        effectiveDate: Date;
+        isActive: boolean;
+    }>;
+    addSalary(id: string, dto: CreateSalaryDto): Promise<{
+        success: boolean;
+    }>;
+    updateSalary(id: string, salaryId: string, dto: CreateSalaryDto): Promise<{
+        success: boolean;
+    }>;
     deleteSalary(id: string, salaryId: string): Promise<{
         success: boolean;
     }>;
-    listBenefits(id: string): Promise<any>;
-    addBenefit(id: string, dto: CreateBenefitDto): Promise<any>;
-    updateBenefit(id: string, benefitId: string, dto: CreateBenefitDto): Promise<any>;
+    listBenefits(id: string): Promise<{
+        id: string;
+        type: string;
+        amount: import("generated/prisma/runtime/library").Decimal;
+        startDate: Date;
+        endDate: Date;
+        isActive: boolean;
+        notes: string;
+    }[]>;
+    addBenefit(id: string, dto: CreateBenefitDto): Promise<{
+        id: string;
+        amount: import("generated/prisma/runtime/library").Decimal;
+        startDate: Date;
+        endDate: Date;
+        isActive: boolean;
+        notes: string;
+    }>;
+    updateBenefit(id: string, benefitId: string, dto: CreateBenefitDto): Promise<{
+        id: string;
+        amount: import("generated/prisma/runtime/library").Decimal;
+        startDate: Date;
+        endDate: Date;
+        isActive: boolean;
+        notes: string;
+    }>;
     deleteBenefit(id: string, benefitId: string): Promise<{
         success: boolean;
     }>;
-    listContacts(id: string): Promise<any>;
+    listContacts(id: string): Promise<{
+        id: string;
+        contactName: string;
+        relationship: string;
+        phone: string;
+    }[]>;
     addContact(id: string, body: {
         contactName: string;
         relationship?: string;
         phone?: string;
-    }): Promise<any>;
+    }): Promise<{
+        id: string;
+        contactName: string;
+        relationship: string;
+        phone: string;
+    }>;
     deleteContact(id: string, contactId: string): Promise<{
         success: boolean;
     }>;
-    listDocuments(id: string): Promise<any>;
+    listDocuments(id: string): Promise<{
+        id: string;
+        docType: string;
+        filePath: string;
+        issueDate: Date;
+        expiryDate: Date;
+    }[]>;
     addDocument(id: string, body: {
         docType: string;
         filePath?: string;
         issueDate?: string;
         expiryDate?: string;
-    }): Promise<any>;
+    }): Promise<{
+        id: string;
+        docType: string;
+        filePath: string;
+        issueDate: Date;
+        expiryDate: Date;
+    }>;
     deleteDocument(id: string, docId: string): Promise<{
         success: boolean;
     }>;

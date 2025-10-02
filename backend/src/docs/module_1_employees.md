@@ -6,9 +6,10 @@ Mục tiêu: Cung cấp API quản lý nhân viên theo kiến trúc 3 lớp, b�
 - ✅ **Database**: Đã tạo migration và seed data với đầy đủ các cột
 - ✅ **Controller**: Đã implement đầy đủ endpoints
 - ✅ **Service**: Đã có business logic cơ bản
-- ✅ **Repository**: Đã có query builder với view `v_employees_api`
+- ✅ **Repository**: Đã chuyển đổi hoàn toàn sang Prisma ORM
 - ✅ **DTOs**: Đã mở rộng để hỗ trợ đầy đủ thông tin nhân viên
-- ✅ **Entity**: Đã cập nhật interface Employee với tất cả field
+- ✅ **Prisma Schema**: Đã introspect và generate từ database hiện tại
+- ✅ **Migration**: Đã hoàn thành chuyển đổi từ TypeORM sang Prisma
 - ⚠️ **Authentication**: Tạm thời disable để test
 - ⚠️ **Error Handling**: Cần bổ sung error messages chi tiết
 
@@ -16,10 +17,10 @@ Mục tiêu: Cung cấp API quản lý nhân viên theo kiến trúc 3 lớp, b�
 - Module & DI: `backend/src/modules/employees/employees.module.ts`
 - Controller: `backend/src/modules/employees/employees.controller.ts` (employees + positions/salaries/benefits/contacts/documents)
 - Service: `backend/src/modules/employees/employees.service.ts` (nghiệp vụ, validate ngày, terminate transaction)
-- Repository: `backend/src/modules/employees/employees.repository.ts` (view `v_employees_api`, EXISTS filters, sort whitelist)
+- Repository: `backend/src/modules/employees/employees.repository.ts` (sử dụng Prisma Client, hỗ trợ đầy đủ CRUD operations)
 - DTOs: `backend/src/modules/employees/dto/*.ts`
-- Entities: `backend/src/modules/employees/entities/*.ts` (không sync schema)
-- Filters: `backend/src/modules/employees/filters/db-exception.filter.ts` (map mã PG → HTTP 4xx/409)
+- Prisma Service: `backend/src/database/prisma.service.ts` (Prisma connection management)
+- Prisma Schema: `backend/prisma/schema.prisma` (database schema definition)
 - Guard: `backend/src/auth/guards/self-or-role.guard.ts` (RBAC self-or-role)
 
 ### API của module
@@ -67,11 +68,11 @@ DELETE /api/employees/:id/documents/:docId - Delete document
 
 ### Quy ước chính
 - **ID**: bigint ↔ string; Date ISO `YYYY-MM-DD`; Money string.
-- **Sort whitelist**: boolean transform trong DTO; map lỗi PG (23505/23P01/23514/23503) → HTTP 4xx/409.
-- **Database**: Không bật TypeORM synchronize; schema dùng Flyway migrations.
+- **Sort whitelist**: boolean transform trong DTO; Prisma type-safe queries.
+- **Database**: Sử dụng Prisma ORM với PostgreSQL; schema được quản lý bởi Prisma.
 - **Authentication**: Sử dụng SelfOrRoleGuard cho RBAC
-- **Error Handling**: DbExceptionFilter map PostgreSQL errors → HTTP status codes
-- **View**: Sử dụng `v_employees_api` view cho API response format
+- **Error Handling**: Prisma error handling với type-safe operations
+- **ORM**: Hoàn toàn chuyển đổi từ TypeORM sang Prisma ORM
 - **DTO Mapping**: Frontend mapping dữ liệu từ form sang DTO format trước khi gửi API
 - **Field Support**: Hỗ trợ đầy đủ thông tin: cá nhân, liên hệ, học vấn, thuế, công việc, phúc lợi
 
@@ -83,14 +84,38 @@ DELETE /api/employees/:id/documents/:docId - Delete document
 - **Views**: `v_employees_api` cho API response format chuẩn
 
 ### Recent Updates
-- ✅ **Fixed Create Employee**: Đã sửa lỗi button "Thêm mới" không hoạt động
-- ✅ **Extended DTOs**: Mở rộng CreateEmployeeDto và UpdateEmployeeDto với đầy đủ field
-- ✅ **Database Schema**: Cập nhật bảng employees với tất cả cột cần thiết
-- ✅ **Frontend Mapping**: Thêm logic mapping dữ liệu từ form sang DTO format
-- ✅ **Repository Updates**: Cập nhật create/update methods để xử lý tất cả field
+- ✅ **Prisma Migration**: Hoàn thành chuyển đổi từ TypeORM sang Prisma ORM
+- ✅ **Prisma Schema**: Introspect database và generate Prisma schema
+- ✅ **Repository Rewrite**: Viết lại hoàn toàn repository sử dụng Prisma Client
+- ✅ **Type Safety**: Tăng cường type safety với Prisma generated types
+- ✅ **Build Success**: Đã fix tất cả compilation errors và build thành công
+- ✅ **NPM Scripts**: Thêm các Prisma scripts: generate, push, migrate, reset, studio
+- ✅ **Dependencies**: Cập nhật package.json, loại bỏ TypeORM dependencies
 
 ### Known Issues & TODOs
 - ⚠️ **Authentication**: Tạm thời disable SelfOrRoleGuard để test
 - ⚠️ **Mock Data**: Endpoint `/me` đang return mock data thay vì query database
 - ⚠️ **Error Messages**: Cần customize error messages cho từng trường hợp
-- ⚠️ **Migration**: Cần chạy migration để cập nhật database schema
+- ⚠️ **Testing**: Cần test các API endpoints với Prisma backend mới
+- ⚠️ **Performance**: Cần optimize Prisma queries cho production
+
+### Prisma Commands
+```bash
+# Generate Prisma Client
+npm run prisma:generate
+
+# Push schema changes to database
+npm run prisma:push
+
+# Create and run migrations
+npm run prisma:migrate
+
+# Reset database (DANGEROUS - development only)
+npm run prisma:reset
+
+# Open Prisma Studio
+npm run prisma:studio
+
+# Full database reset with push and generate
+npm run db:reset
+```

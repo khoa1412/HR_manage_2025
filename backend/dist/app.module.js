@@ -9,35 +9,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const typeorm_1 = require("@nestjs/typeorm");
 const employees_module_1 = require("./modules/employees/employees.module");
+const prisma_service_1 = require("./database/prisma.service");
 let AppModule = class AppModule {
 };
-AppModule = __decorate([
+exports.AppModule = AppModule;
+exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 envFilePath: '.env',
             }),
-            typeorm_1.TypeOrmModule.forRootAsync({
-                imports: [config_1.ConfigModule],
-                useFactory: (configService) => ({
-                    type: 'postgres',
-                    host: configService.get('DB_HOST', 'localhost'),
-                    port: configService.get('DB_PORT', 5432),
-                    username: configService.get('DB_USERNAME', 'postgres'),
-                    password: configService.get('DB_PASSWORD', 'password'),
-                    database: configService.get('DB_NAME', 'hrm_db'),
-                    entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                    synchronize: configService.get('NODE_ENV') === 'development',
-                    logging: configService.get('NODE_ENV') === 'development',
-                }),
-                inject: [config_1.ConfigService],
-            }),
             employees_module_1.EmployeesModule,
         ],
+        providers: [prisma_service_1.PrismaService],
+        exports: [prisma_service_1.PrismaService],
     })
 ], AppModule);
-exports.AppModule = AppModule;
 //# sourceMappingURL=app.module.js.map

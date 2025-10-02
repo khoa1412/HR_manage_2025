@@ -58,7 +58,10 @@ export async function listEmployees(filter = {}) {
     if (filter.status) queryParams.append('status', filter.status)
     
     const endpoint = `/employees${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
-    return await apiCall(endpoint)
+    const response = await apiCall(endpoint)
+    
+    // Handle backend response format - extract items array
+    return Array.isArray(response) ? response : (response?.items || response?.data || [])
   } catch (error) {
     console.error('Error listing employees from backend, falling back to localStorage:', error)
     // Fallback to localStorage

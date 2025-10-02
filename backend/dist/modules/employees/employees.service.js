@@ -168,9 +168,9 @@ let EmployeesService = class EmployeesService {
         return this.repo.deleteDocument(id, docId);
     }
 };
-EmployeesService = __decorate([
+exports.EmployeesService = EmployeesService;
+exports.EmployeesService = EmployeesService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [employees_repository_1.EmployeesRepository])
 ], EmployeesService);
-exports.EmployeesService = EmployeesService;
 //# sourceMappingURL=employees.service.js.map

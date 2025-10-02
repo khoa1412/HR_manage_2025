@@ -49,8 +49,13 @@ Module Quản lý Nhân viên cung cấp các chức năng cốt lõi để qu�
     - **Công việc**: Phòng ban, vị trí, cấp bậc, hợp đồng, lương
     - **Phúc lợi**: Các loại phụ cấp và thưởng
     - **Tài liệu**: Upload các loại giấy tờ liên quan
-- **Lưu và Hủy**: Các nút để xác nhận lưu thông tin hoặc đóng modal.
-- **Validation**: Form có validation đầy đủ cho các trường bắt buộc.
+- **Buttons**: 
+    - **"Hủy"**: Đóng modal không lưu thông tin
+    - **"Thêm mới"/"Cập nhật"**: Lưu toàn bộ thông tin và đóng modal
+- **Validation**: 
+    - Form có validation đầy đủ cho các trường bắt buộc
+    - Hiển thị warning và chuyển đến tab có lỗi khi thiếu thông tin bắt buộc
+    - Thông báo rõ ràng về các trường cần điền
 
 ### 🗑️ **Xóa nhân viên**
 
@@ -100,6 +105,8 @@ npm run db:setup
 - ✅ **Form Integration**: Đã kết nối đầy đủ form với backend API
 - ✅ **Data Mapping**: Đã thêm logic mapping dữ liệu từ form sang DTO
 - ✅ **Extended Fields**: Hỗ trợ đầy đủ thông tin nhân viên trong form
+- ✅ **UI Simplification**: Đã xóa button "Lưu & Tiếp tục" để đơn giản hóa workflow
+- ✅ **Enhanced Validation**: Cải thiện logic validation với thông báo rõ ràng
 
 ### 🚨 Known Issues
 - **Authentication**: SelfOrRoleGuard tạm thời bị disable để test

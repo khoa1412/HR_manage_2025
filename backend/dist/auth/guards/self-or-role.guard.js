@@ -22,8 +22,8 @@ let SelfOrRoleGuard = class SelfOrRoleGuard {
         return false;
     }
 };
-SelfOrRoleGuard = __decorate([
+exports.SelfOrRoleGuard = SelfOrRoleGuard;
+exports.SelfOrRoleGuard = SelfOrRoleGuard = __decorate([
     (0, common_1.Injectable)()
 ], SelfOrRoleGuard);
-exports.SelfOrRoleGuard = SelfOrRoleGuard;
 //# sourceMappingURL=self-or-role.guard.js.map

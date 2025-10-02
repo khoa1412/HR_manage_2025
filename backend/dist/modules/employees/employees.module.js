@@ -8,19 +8,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmployeesModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
 const employees_controller_1 = require("./employees.controller");
 const employees_service_1 = require("./employees.service");
 const employees_repository_1 = require("./employees.repository");
+const prisma_service_1 = require("../../database/prisma.service");
 let EmployeesModule = class EmployeesModule {
 };
-EmployeesModule = __decorate([
+exports.EmployeesModule = EmployeesModule;
+exports.EmployeesModule = EmployeesModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([])],
         controllers: [employees_controller_1.EmployeesController],
-        providers: [employees_service_1.EmployeesService, employees_repository_1.EmployeesRepository],
+        providers: [employees_service_1.EmployeesService, employees_repository_1.EmployeesRepository, prisma_service_1.PrismaService],
         exports: [employees_service_1.EmployeesService],
     })
 ], EmployeesModule);
-exports.EmployeesModule = EmployeesModule;
 //# sourceMappingURL=employees.module.js.map

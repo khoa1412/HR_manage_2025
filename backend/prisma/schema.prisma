@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model auth_users {
+  user_id       BigInt     @id @default(autoincrement())
+  employee_id   BigInt?
+  username      String     @unique @db.VarChar(100)
+  email         String     @unique @db.VarChar(150)
+  password_hash String     @db.VarChar(255)
+  role          String     @db.VarChar(20)
+  last_login    DateTime?  @db.Timestamp(6)
+  created_at    DateTime   @default(now()) @db.Timestamp(6)
+  updated_at    DateTime   @default(now()) @db.Timestamp(6)
+  employees     employees? @relation(fields: [employee_id], references: [employee_id])
+
+  @@index([employee_id], map: "idx_auth_employee")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model benefit_types {
+  type_id           BigInt              @id @default(autoincrement())
+  name              String              @db.VarChar(150)
+  type              String              @db.VarChar(50)
+  category          String?             @db.VarChar(100)
+  unit              String?             @db.VarChar(50)
+  description       String?
+  is_custom         Boolean             @default(false)
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  employee_benefits employee_benefits[]
+
+  @@unique([name, type], map: "uq_benefit_types_name")
+}
+
+model departments {
+  department_id                                  BigInt        @id @default(autoincrement())
+  name                                           String        @unique(map: "uq_departments_name") @db.VarChar(150)
+  manager_id                                     BigInt?
+  parent_id                                      BigInt?
+  budget                                         Decimal?      @db.Decimal(15, 2)
+  created_at                                     DateTime      @default(now()) @db.Timestamp(6)
+  updated_at                                     DateTime      @default(now()) @db.Timestamp(6)
+  employees_departments_manager_idToemployees    employees?    @relation("departments_manager_idToemployees", fields: [manager_id], references: [employee_id])
+  departments                                    departments?  @relation("departmentsTodepartments", fields: [parent_id], references: [department_id])
+  other_departments                              departments[] @relation("departmentsTodepartments")
+  employees_employees_department_idTodepartments employees[]   @relation("employees_department_idTodepartments")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This table contains exclusion constraints and requires additional setup for migrations. Visit https://pris.ly/d/exclusion-constraints for more info.
+model employee_benefits {
+  benefit_id    BigInt        @id @default(autoincrement())
+  employee_id   BigInt
+  type_id       BigInt
+  amount        Decimal?      @db.Decimal(12, 2)
+  start_date    DateTime      @db.Date
+  end_date      DateTime?     @db.Date
+  is_active     Boolean       @default(true)
+  notes         String?
+  created_at    DateTime      @default(now()) @db.Timestamp(6)
+  employees     employees     @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  benefit_types benefit_types @relation(fields: [type_id], references: [type_id])
+
+  @@index([employee_id, type_id, start_date], map: "idx_benefits_emp_type")
+  @@index([employee_id], map: "idx_benefits_employee")
+}
+
+model employee_contacts {
+  contact_id   BigInt    @id @default(autoincrement())
+  employee_id  BigInt
+  contact_name String?   @db.VarChar(150)
+  relationship String?   @db.VarChar(50)
+  phone        String?   @db.VarChar(50)
+  created_at   DateTime  @default(now()) @db.Timestamp(6)
+  employees    employees @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+
+  @@index([employee_id], map: "idx_contacts_employee")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model employee_documents {
+  doc_id      BigInt    @id @default(autoincrement())
+  employee_id BigInt
+  doc_type    String    @db.VarChar(50)
+  file_path   String?   @db.VarChar(255)
+  issue_date  DateTime? @db.Date
+  expiry_date DateTime? @db.Date
+  created_at  DateTime  @default(now()) @db.Timestamp(6)
+  employees   employees @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+
+  @@index([employee_id], map: "idx_docs_employee")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model employee_payroll_components {
+  component_id      BigInt             @id @default(autoincrement())
+  employee_id       BigInt
+  salary_id         BigInt?
+  component_type    String             @db.VarChar(50)
+  amount            Decimal            @db.Decimal(12, 2)
+  description       String?
+  created_at        DateTime           @default(now()) @db.Timestamp(6)
+  employees         employees          @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  employee_salaries employee_salaries? @relation(fields: [salary_id], references: [salary_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This table contains exclusion constraints and requires additional setup for migrations. Visit https://pris.ly/d/exclusion-constraints for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model employee_positions {
+  position_id BigInt    @id @default(autoincrement())
+  employee_id BigInt
+  title       String    @db.VarChar(150)
+  start_date  DateTime  @db.Date
+  end_date    DateTime? @db.Date
+  created_at  DateTime  @default(now()) @db.Timestamp(6)
+  employees   employees @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This table contains exclusion constraints and requires additional setup for migrations. Visit https://pris.ly/d/exclusion-constraints for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model employee_salaries {
+  salary_id                   BigInt                        @id @default(autoincrement())
+  employee_id                 BigInt
+  base_salary                 Decimal                       @db.Decimal(12, 2)
+  effective_date              DateTime                      @db.Date
+  end_date                    DateTime?                     @db.Date
+  notes                       String?
+  created_at                  DateTime                      @default(now()) @db.Timestamp(6)
+  employee_payroll_components employee_payroll_components[]
+  employees                   employees                     @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+}
+
+model employees {
+  employee_id                                      BigInt                        @id @default(autoincrement())
+  employee_code                                    String                        @unique @db.VarChar(50)
+  full_name                                        String                        @db.VarChar(200)
+  email                                            String                        @unique @db.VarChar(150)
+  phone                                            String?                       @db.VarChar(50)
+  dob                                              DateTime?                     @db.Date
+  birth_place                                      String?                       @db.VarChar(200)
+  gender                                           String?                       @db.VarChar(10)
+  cccd_number                                      String?                       @db.VarChar(20)
+  cccd_issue_date                                  DateTime?                     @db.Date
+  cccd_issue_place                                 String?                       @db.VarChar(200)
+  marital_status                                   String?                       @db.VarChar(50)
+  personal_phone                                   String?                       @db.VarChar(50)
+  personal_email                                   String?                       @db.VarChar(150)
+  temporary_address                                String?
+  permanent_address                                String?
+  emergency_contact_name                           String?                       @db.VarChar(200)
+  emergency_contact_relation                       String?                       @db.VarChar(50)
+  emergency_contact_phone                          String?                       @db.VarChar(50)
+  highest_degree                                   String?                       @db.VarChar(100)
+  university                                       String?                       @db.VarChar(200)
+  major                                            String?                       @db.VarChar(200)
+  other_certificates                               String?
+  languages                                        String?                       @db.VarChar(200)
+  language_level                                   String?                       @db.VarChar(200)
+  social_insurance_code                            String?                       @db.VarChar(20)
+  tax_code                                         String?                       @db.VarChar(20)
+  department                                       String?                       @db.VarChar(200)
+  position                                         String?                       @db.VarChar(200)
+  level                                            String?                       @db.VarChar(100)
+  title                                            String?                       @db.VarChar(200)
+  contract_type                                    String?                       @db.VarChar(100)
+  start_date                                       DateTime?                     @db.Date
+  contract_duration                                String?                       @db.VarChar(50)
+  end_date                                         DateTime?                     @db.Date
+  probation_salary                                 Decimal?                      @db.Decimal(12, 2)
+  official_salary                                  Decimal?                      @db.Decimal(12, 2)
+  fuel_allowance                                   Decimal?                      @db.Decimal(12, 2)
+  meal_allowance                                   Decimal?                      @db.Decimal(12, 2)
+  transport_allowance                              Decimal?                      @db.Decimal(12, 2)
+  uniform_allowance                                Decimal?                      @db.Decimal(12, 2)
+  performance_bonus                                Decimal?                      @db.Decimal(5, 2)
+  hire_date                                        DateTime                      @db.Date
+  join_date                                        DateTime?                     @db.Date
+  status                                           employment_status_enum        @default(Active)
+  department_id                                    BigInt?
+  created_at                                       DateTime                      @default(now()) @db.Timestamp(6)
+  updated_at                                       DateTime                      @default(now()) @db.Timestamp(6)
+  auth_users                                       auth_users[]
+  departments_departments_manager_idToemployees    departments[]                 @relation("departments_manager_idToemployees")
+  employee_benefits                                employee_benefits[]
+  employee_contacts                                employee_contacts[]
+  employee_documents                               employee_documents[]
+  employee_payroll_components                      employee_payroll_components[]
+  employee_positions                               employee_positions[]
+  employee_salaries                                employee_salaries[]
+  departments_employees_department_idTodepartments departments?                  @relation("employees_department_idTodepartments", fields: [department_id], references: [department_id])
+
+  @@index([employee_code], map: "idx_employees_code")
+  @@index([department_id], map: "idx_employees_dept")
+  @@index([join_date], map: "idx_employees_join_date")
+  @@index([status], map: "idx_employees_status")
+}
+
+enum employment_status_enum {
+  Active
+  Inactive
+  Probation
+  Terminated
+}

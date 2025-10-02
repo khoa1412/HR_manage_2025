@@ -13,6 +13,7 @@ exports.CreateBenefitDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateBenefitDto {
 }
+exports.CreateBenefitDto = CreateBenefitDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
@@ -41,5 +42,4 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateBenefitDto.prototype, "notes", void 0);
-exports.CreateBenefitDto = CreateBenefitDto;
 //# sourceMappingURL=create-benefit.dto.js.map

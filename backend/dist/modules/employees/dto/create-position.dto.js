@@ -13,6 +13,7 @@ exports.CreatePositionDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreatePositionDto {
 }
+exports.CreatePositionDto = CreatePositionDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
@@ -26,5 +27,4 @@ __decorate([
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreatePositionDto.prototype, "endDate", void 0);
-exports.CreatePositionDto = CreatePositionDto;
 //# sourceMappingURL=create-position.dto.js.map
