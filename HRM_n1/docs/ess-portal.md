@@ -12,7 +12,7 @@ Cổng Employee Self-Service (ESS) là không gian làm việc cá nhân, nơi n
 ## 🧭 Cách truy cập
 
 1. **Từ thanh điều hướng (sidebar)**: Nhấn vào mục "ESS".
-2. **URL trực tiếp**: `http://localhost:3000/ess` (cổng mặc định khi phát triển).
+2. **URL trực tiếp**: `http://localhost:8386/ess` (cổng mặc định khi phát triển).
 
 ## 📱 Giao diện và Tính năng
 

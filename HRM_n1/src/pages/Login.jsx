@@ -144,11 +144,11 @@ export default function Login() {
               <div className="bg-green-50 p-3 rounded-md cursor-pointer hover:bg-green-100"
                    onClick={() => {
                      setEmail('user@company.com')
-                     setPassword('user123')
+                     setPassword('admin123')
                    }}>
                 <p className="font-medium text-green-900">Nhân viên:</p>
                 <p><strong>Email:</strong> user@company.com</p>
-                <p><strong>Mật khẩu:</strong> user123</p>
+                <p><strong>Mật khẩu:</strong> admin123</p>
               </div>
             </div>
             <p className="text-xs text-gray-500 mt-2">Click vào các ô trên để tự động điền thông tin</p>

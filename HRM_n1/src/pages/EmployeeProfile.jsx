@@ -17,7 +17,7 @@ import {
   Users,
   History
 } from 'lucide-react'
-import { getEmployee } from '../services/api'
+import { getEmployee } from '../services/employees.api'
 import { getEmployeeBenefits, calculateEmployeeBenefits, getBenefitTypes } from '../services/benefitsService'
 import ChangeHistory from '../components/ChangeHistory'
 

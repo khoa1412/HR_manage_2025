@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { getCurrentUserId, setCurrentUserId, getIsHR, setIsHR, getEmployee } from '../services/api'
+import { getCurrentUserId, setCurrentUserId, getIsHR, setIsHR } from '../services/api'
+import { getMe, getEmployee } from '../services/employees.api'
 
 const AuthContext = createContext({})
 
@@ -17,7 +18,13 @@ export function AuthProvider({ children }) {
       console.log('Loading user, currentUserId:', currentUserId)
       
       if (currentUserId) {
-        const employee = await getEmployee(currentUserId)
+        let employee = null
+        try {
+          employee = await getMe()
+        } catch {}
+        if (!employee) {
+          employee = await getEmployee(currentUserId)
+        }
         console.log('Found employee:', employee)
         
         if (employee) {
@@ -59,7 +66,7 @@ export function AuthProvider({ children }) {
       localStorage.setItem('authToken', 'fake-jwt-token')
       await loadUser()
       return { success: true }
-    } else if (email === 'user@company.com' && password === 'user123') {
+    } else if (email === 'user@company.com' && password === 'admin123') {
       console.log('User login successful')
       // Set as regular employee
       setCurrentUserId('2')
