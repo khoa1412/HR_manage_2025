@@ -1,16 +1,16 @@
-#Table staff_acc:
-id | staff_name | role | acc_name | password_hash
+#Table staff_acc (1-1 bắt buộc với staff_info):
+id | staff_name | role | acc_name | password_hash | staff_code
 
 -- SCHEMA:
     id SERIAL PRIMARY KEY,
-    staff_name VARCHAR(50) NOT NULL,
+    staff_name VARCHAR(50),
     role VARCHAR(20) CHECK (role IN ('staff','SysAdmin','manager','hr_staff','hr_manager')) NOT NULL,
     acc_name VARCHAR(15) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code) 
+    staff_code VARCHAR(20) UNIQUE NOT NULL REFERENCES staff_info(staff_code)
 --
 
-#Table staff_info:
+#Table staff_info (bảng gốc):
 id | full_name | date_birth | place_birth | gender | marital_status | staff_code | is_active
 
 -- SCHEMA:
@@ -24,12 +24,12 @@ id | full_name | date_birth | place_birth | gender | marital_status | staff_code
     is_active BOOLEAN DEFAULT true 
 --
 
-#Table citizen_id:
+#Table citizen_id (1-1 bắt buộc với staff_info):
 id | staff_code | cccd | date_issue | place_issue | image_front_cccd | image_back_cccd 
 
 -- SCHEMA:
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) UNIQUE NOT NULL REFERENCES staff_info(staff_code),
     cccd VARCHAR(20) UNIQUE NOT NULL,
     date_issue DATE,
     place_issue VARCHAR(100),
@@ -38,22 +38,22 @@ id | staff_code | cccd | date_issue | place_issue | image_front_cccd | image_bac
 --
 ** lưu ý  : image_back_cccd, image_front_cccd TEXT là url đường dẫn chứ không phải text thông thường **
 
-#Table contact:
+#Table contact (1-1 bắt buộc với staff_info):
 id | staff_code | temp_address | permant_address
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) UNIQUE NOT NULL REFERENCES staff_info(staff_code),
     temp_address TEXT,
     permant_address TEXT
 --
 
-#Table emergency_contact:
+#Table emergency_contact (1-1 bắt buộc với staff_info):
 id | staff_code | phone_number | email | name_emergency | relationship | rela_phone
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) UNIQUE NOT NULL REFERENCES staff_info(staff_code),
     phone_number VARCHAR(15),
     email VARCHAR(100),
     name_emergency VARCHAR(100),
@@ -61,21 +61,21 @@ id | staff_code | phone_number | email | name_emergency | relationship | rela_ph
     rela_phone VARCHAR(15)
 --
 
-#Table tax_n_insurance:
+#Table tax_n_insurance (1-1 bắt buộc với staff_info):
 id | staff_code | social_insuran | tax_code
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) UNIQUE NOT NULL REFERENCES staff_info(staff_code),
     social_insuran VARCHAR(20),
     tax_code VARCHAR(20) UNIQUE
 --
 
-#Table education:
+#Table education (1-n với staff_info):
 id| staff_code | degree | institution | major | year | attachment_image
 
 -- SCHEMA    id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     degree VARCHAR(100),
     institution VARCHAR(100),
     major VARCHAR(100),
@@ -84,12 +84,12 @@ id| staff_code | degree | institution | major | year | attachment_image
 --
 ** lưu ý  : attachment_image  TEXT là url đường dẫn chứ không phải text thông thường **
 
-#Table certifications:
+#Table certifications (1-n với staff_info):
 id | staff_code | language | level | score | attachment_image | issue_at | expires_at
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     language VARCHAR(50),
     level VARCHAR(50),
     score NUMERIC(5,2),
@@ -98,35 +98,35 @@ id | staff_code | language | level | score | attachment_image | issue_at | expir
     expires_at DATE
 --
 
-#Table pos_info:
+#Table pos_info (1-n với staff_info):
 id | staff_code | department_id | position | effective_date
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     department_id INT REFERENCES department(department_id),
     position VARCHAR(100),
     effective_date DATE
 --
 
-#Table salary:
+#Table salary (1-n với staff_info):
 id | staff_code | base_salary | perform_bonus | effective_date
 
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     base_salary NUMERIC(12,2) NOT NULL,
     perform_bonus NUMERIC(12,2),
     effective_date DATE
 --
 
-#Table resign_info: 
+#Table resign_info (1-1 tùy chọn với staff_info): 
 id | staff_code | leave_day | items_employee | items_company | social_insuran_detach | terminate_decision | tax_withhold_paper
 
 -- SCHEMA    
 	id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) UNIQUE NOT NULL REFERENCES staff_info(staff_code),
     leave_day DATE,
     items_employee TEXT,
     items_company TEXT,
@@ -136,18 +136,18 @@ id | staff_code | leave_day | items_employee | items_company | social_insuran_de
 --
 
 ** lưu ý  : social_insuran_detach, terminate_decision, tax_withhold_paper  TEXT là url đường dẫn chứ không phải text thông thường **
-#Table contract:
+#Table contract (1-n với staff_info):
 id | staff_code | contract_type | start_date | end_date
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     contract_type VARCHAR(50),
     start_date DATE,
     end_date DATE
 --
 
-#Table insurances:
+#Table insurances (nhiều bản ghi theo tháng cho staff_info):
 id | staff_code | month | staff_bhxh | staff_bhyt | staff_bhtn | company_contribution | created_by
 
 -- SCHEMA
@@ -161,14 +161,14 @@ id | staff_code | month | staff_bhxh | staff_bhyt | staff_bhtn | company_contrib
     created_by VARCHAR(20)
 --
 
-#Table tax:
+#Table tax (1-n với staff_info):
 id | staff_code | tax_type | period_type | amount | dependents | update_at | created_by
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     tax_type VARCHAR(50),
-    period_type ENUM ('monthly','yearly')),
+    period_type VARCHAR(10) CHECK (period_type IN ('monthly','yearly')),
     amount NUMERIC(12,2),
     dependents INT DEFAULT 0,
     update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -185,24 +185,24 @@ department_id | department_name | description | day_create
     day_create DATE DEFAULT CURRENT_DATE
 --
 
-#Table attendance: (chấm công)
+#Table attendance (1-n với staff_info; n-1 optional với leave_requests):
 id | staff_code | checkin | checkout | atten_type | leave_req_id
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     checkin TIMESTAMP,
     checkout TIMESTAMP,
-    atten_type ENUM ('present','absent','late')),
+    atten_type VARCHAR(10) CHECK (atten_type IN ('present','absent','late')),
     leave_req_id INT REFERENCES leave_requests(id)
 --
 
-#Table leave_requests: (nghỉ phép)
+#Table leave_requests (1-n với staff_info; 1-n với absent; 1-n từ leave_requests sang attendance):
 id | staff_code | start_date | end_date | note | status | req_at | absent_id
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
-    staff_code VARCHAR(20) REFERENCES staff_info(staff_code),
+    staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
     start_date DATE,
     end_date DATE,
     note TEXT,
@@ -211,7 +211,7 @@ id | staff_code | start_date | end_date | note | status | req_at | absent_id
     absent_id INT REFERENCES absent(id)
 --
 
-#Table absent: (bảng định nghĩa nghỉ phép)
+#Table absent (bảng định nghĩa nghỉ phép; 1-n với leave_requests):
 id | name | description 
 
 -- SCHEMA
