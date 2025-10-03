@@ -4,19 +4,15 @@ export class UpdateEmployeeDto {
   // Thông tin cơ bản
   @IsOptional() @IsString() employeeCode?: string;
   @IsOptional() @IsString() fullName?: string;
-  @IsOptional() @IsEmail() email?: string;
-  @IsOptional() @IsString() phone?: string;
   @IsOptional() @IsDateString() dob?: string;
   @IsOptional() @IsString() birthPlace?: string;
-  @IsOptional() @IsString() gender?: string;
+  @IsOptional() @IsIn(['male','female','other']) gender?: 'male'|'female'|'other';
   @IsOptional() @IsString() cccdNumber?: string;
   @IsOptional() @IsDateString() cccdIssueDate?: string;
   @IsOptional() @IsString() cccdIssuePlace?: string;
   @IsOptional() @IsString() maritalStatus?: string;
   
   // Thông tin liên hệ
-  @IsOptional() @IsString() personalPhone?: string;
-  @IsOptional() @IsEmail() personalEmail?: string;
   @IsOptional() @IsString() temporaryAddress?: string;
   @IsOptional() @IsString() permanentAddress?: string;
   
@@ -38,29 +34,12 @@ export class UpdateEmployeeDto {
   @IsOptional() @IsString() taxCode?: string;
   
   // Thông tin công việc
-  @IsOptional() @IsString() department?: string;
-  @IsOptional() @IsString() position?: string;
-  @IsOptional() @IsString() level?: string;
-  @IsOptional() @IsString() title?: string;
-  @IsOptional() @IsString() contractType?: string;
-  @IsOptional() @IsDateString() startDate?: string;
-  @IsOptional() @IsString() contractDuration?: string;
-  @IsOptional() @IsDateString() endDate?: string;
-  @IsOptional() @IsNumberString() probationSalary?: string;
-  @IsOptional() @IsNumberString() officialSalary?: string;
+  // Các trường công việc/phúc lợi tách bảng riêng trong schema mới → bỏ khỏi DTO update staff_info
   
   // Phúc lợi
-  @IsOptional() @IsNumberString() fuelAllowance?: string;
-  @IsOptional() @IsNumberString() mealAllowance?: string;
-  @IsOptional() @IsNumberString() transportAllowance?: string;
-  @IsOptional() @IsNumberString() uniformAllowance?: string;
-  @IsOptional() @IsNumberString() performanceBonus?: string;
   
   // Thông tin hệ thống
   @IsOptional() @IsIn(['Active','Inactive','Probation','Terminated']) status?: 'Active'|'Inactive'|'Probation'|'Terminated';
-  @IsOptional() @IsDateString() hireDate?: string;
-  @IsOptional() @IsDateString() joinDate?: string;
-  @IsOptional() @IsString() departmentId?: string;
 }
 
 

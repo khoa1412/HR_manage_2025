@@ -1,17 +1,13 @@
 export declare class UpdateEmployeeDto {
     employeeCode?: string;
     fullName?: string;
-    email?: string;
-    phone?: string;
     dob?: string;
     birthPlace?: string;
-    gender?: string;
+    gender?: 'male' | 'female' | 'other';
     cccdNumber?: string;
     cccdIssueDate?: string;
     cccdIssuePlace?: string;
     maritalStatus?: string;
-    personalPhone?: string;
-    personalEmail?: string;
     temporaryAddress?: string;
     permanentAddress?: string;
     emergencyContactName?: string;
@@ -25,23 +21,5 @@ export declare class UpdateEmployeeDto {
     languageLevel?: string;
     socialInsuranceCode?: string;
     taxCode?: string;
-    department?: string;
-    position?: string;
-    level?: string;
-    title?: string;
-    contractType?: string;
-    startDate?: string;
-    contractDuration?: string;
-    endDate?: string;
-    probationSalary?: string;
-    officialSalary?: string;
-    fuelAllowance?: string;
-    mealAllowance?: string;
-    transportAllowance?: string;
-    uniformAllowance?: string;
-    performanceBonus?: string;
     status?: 'Active' | 'Inactive' | 'Probation' | 'Terminated';
-    hireDate?: string;
-    joinDate?: string;
-    departmentId?: string;
 }

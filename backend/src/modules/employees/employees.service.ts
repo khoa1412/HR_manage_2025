@@ -46,11 +46,9 @@ export class EmployeesService {
   }
 
   private validateDates(dto: CreateEmployeeDto | UpdateEmployeeDto, current?: any) {
-    const hire = dto.hireDate ?? current?.hireDate;
-    const join = dto.joinDate ?? current?.joinDate;
-    const dob = dto.dob ?? current?.dob;
-    if (hire && join && hire > join) throw new UnprocessableEntityException('joinDate must be >= hireDate');
-    if (dob && hire && dob > hire) throw new UnprocessableEntityException('dob must be <= hireDate');
+    const dob = (dto as any).dob ?? current?.dob;
+    // staff_info không còn hire/join date ở schema mới → chỉ kiểm tra dob hợp lệ nếu cần
+    if (dob && isNaN(Date.parse(dob))) throw new UnprocessableEntityException('dob is invalid');
   }
 
   async terminate(id: string, body: { date: string; reason?: string }) {

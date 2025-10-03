@@ -26,16 +26,6 @@ __decorate([
 ], UpdateEmployeeDto.prototype, "fullName", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEmail)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "phone", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], UpdateEmployeeDto.prototype, "dob", void 0);
@@ -46,7 +36,7 @@ __decorate([
 ], UpdateEmployeeDto.prototype, "birthPlace", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(['male', 'female', 'other']),
     __metadata("design:type", String)
 ], UpdateEmployeeDto.prototype, "gender", void 0);
 __decorate([
@@ -69,16 +59,6 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateEmployeeDto.prototype, "maritalStatus", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "personalPhone", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEmail)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "personalEmail", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
@@ -146,97 +126,7 @@ __decorate([
 ], UpdateEmployeeDto.prototype, "taxCode", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "department", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "position", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "level", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "title", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "contractType", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "startDate", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "contractDuration", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "endDate", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "probationSalary", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "officialSalary", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "fuelAllowance", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "mealAllowance", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "transportAllowance", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "uniformAllowance", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumberString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "performanceBonus", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsIn)(['Active', 'Inactive', 'Probation', 'Terminated']),
     __metadata("design:type", String)
 ], UpdateEmployeeDto.prototype, "status", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "hireDate", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "joinDate", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateEmployeeDto.prototype, "departmentId", void 0);
 //# sourceMappingURL=update-employee.dto.js.map

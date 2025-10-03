@@ -13,11 +13,8 @@ export declare class EmployeesService {
             id: string;
             employeeCode: string;
             fullName: string;
-            email: string;
-            phone: string;
-            joinDate: Date;
-            status: import("generated/prisma").$Enums.employment_status_enum;
-            department: string;
+            status: string;
+            department: number;
             position: string;
         }[];
         total: number;
@@ -29,210 +26,384 @@ export declare class EmployeesService {
         id: string;
         employeeCode: string;
         fullName: string;
-        email: string;
-        phone: string;
-        dob: Date;
-        birthPlace: string;
-        gender: string;
-        cccdNumber: string;
-        cccdIssueDate: Date;
-        cccdIssuePlace: string;
+        dateBirth: Date;
+        placeBirth: string;
+        gender: import("generated/prisma").$Enums.gender_enum;
         maritalStatus: string;
-        personalPhone: string;
-        personalEmail: string;
-        temporaryAddress: string;
-        permanentAddress: string;
-        emergencyContactName: string;
-        emergencyContactRelation: string;
-        emergencyContactPhone: string;
-        highestDegree: string;
-        university: string;
-        major: string;
-        otherCertificates: string;
-        languages: string;
-        languageLevel: string;
-        socialInsuranceCode: string;
-        taxCode: string;
-        department: string;
-        position: string;
-        level: string;
-        title: string;
-        contractType: string;
-        startDate: Date;
-        contractDuration: string;
-        endDate: Date;
-        probationSalary: import("generated/prisma/runtime/library").Decimal;
-        officialSalary: import("generated/prisma/runtime/library").Decimal;
-        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
-        mealAllowance: import("generated/prisma/runtime/library").Decimal;
-        transportAllowance: import("generated/prisma/runtime/library").Decimal;
-        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
-        performanceBonus: import("generated/prisma/runtime/library").Decimal;
-        hireDate: Date;
-        joinDate: Date;
-        status: import("generated/prisma").$Enums.employment_status_enum;
-        departmentId: string;
-        benefits: {
-            id: string;
-            type: string;
-            amount: import("generated/prisma/runtime/library").Decimal;
-            startDate: Date;
-            endDate: Date;
-            isActive: boolean;
-            notes: string;
+        isActive: boolean;
+        contact: {
+            staff_code: string;
+            id: number;
+            temp_address: string | null;
+            permant_address: string | null;
+        };
+        emergency_contact: {
+            staff_code: string;
+            id: number;
+            phone_number: string | null;
+            email: string | null;
+            name_emergency: string | null;
+            relationship: string | null;
+            rela_phone: string | null;
+        };
+        citizen_id: {
+            staff_code: string;
+            id: number;
+            cccd: string;
+            date_issue: Date | null;
+            place_issue: string | null;
+            image_front_cccd: string | null;
+            image_back_cccd: string | null;
+        };
+        tax_n_insurance: {
+            staff_code: string;
+            id: number;
+            social_insuran: string | null;
+            tax_code: string | null;
+        };
+        education: {
+            major: string | null;
+            staff_code: string;
+            id: number;
+            degree: string | null;
+            institution: string | null;
+            year: number | null;
+            attachment_image: string | null;
         }[];
-        contacts: {
-            id: string;
-            contactName: string;
-            relationship: string;
-            phone: string;
+        certifications: {
+            level: string | null;
+            staff_code: string;
+            id: number;
+            attachment_image: string | null;
+            language: string | null;
+            score: import("generated/prisma/runtime/library").Decimal | null;
+            issue_at: Date | null;
+            expires_at: Date | null;
         }[];
-        documents: {
-            id: string;
-            docType: string;
-            filePath: string;
-            issueDate: Date;
-            expiryDate: Date;
+        pos_info: {
+            position: string | null;
+            staff_code: string;
+            id: number;
+            department_id: number | null;
+            effective_date: Date | null;
+        }[];
+        salary: {
+            staff_code: string;
+            id: number;
+            effective_date: Date | null;
+            base_salary: import("generated/prisma/runtime/library").Decimal;
+            perform_bonus: import("generated/prisma/runtime/library").Decimal | null;
+        }[];
+        resign_info: {
+            staff_code: string;
+            id: number;
+            leave_day: Date | null;
+            items_employee: string | null;
+            items_company: string | null;
+            social_insuran_detach: string | null;
+            terminate_decision: string | null;
+            tax_withhold_paper: string | null;
+        };
+        contract: {
+            staff_code: string;
+            id: number;
+            type: number | null;
+            start_date: Date | null;
+            end_date: Date | null;
+        }[];
+        insurances: {
+            staff_code: string | null;
+            id: number;
+            month: Date;
+            staff_bhxh: import("generated/prisma/runtime/library").Decimal | null;
+            staff_bhyt: import("generated/prisma/runtime/library").Decimal | null;
+            staff_bhtn: import("generated/prisma/runtime/library").Decimal | null;
+            company_contribution: import("generated/prisma/runtime/library").Decimal | null;
+            created_by: string | null;
+        }[];
+        tax: {
+            staff_code: string;
+            id: number;
+            created_by: string | null;
+            tax_type: string | null;
+            period_type: import("generated/prisma").$Enums.period_type_enum;
+            amount: import("generated/prisma/runtime/library").Decimal | null;
+            dependents: number;
+            update_at: Date;
+        }[];
+        attendance: {
+            staff_code: string;
+            id: number;
+            checkin: Date | null;
+            checkout: Date | null;
+            atten_type: import("generated/prisma").$Enums.attendance_type_enum;
+            leave_req_id: number | null;
+        }[];
+        leave_requests: {
+            status: import("generated/prisma").$Enums.leave_status_enum;
+            staff_code: string;
+            id: number;
+            start_date: Date | null;
+            end_date: Date | null;
+            note: string | null;
+            req_at: Date;
+            absent_id: number | null;
         }[];
     }>;
     create(dto: CreateEmployeeDto): Promise<{
         id: string;
         employeeCode: string;
         fullName: string;
-        email: string;
-        phone: string;
-        dob: Date;
-        birthPlace: string;
-        gender: string;
-        cccdNumber: string;
-        cccdIssueDate: Date;
-        cccdIssuePlace: string;
+        dateBirth: Date;
+        placeBirth: string;
+        gender: import("generated/prisma").$Enums.gender_enum;
         maritalStatus: string;
-        personalPhone: string;
-        personalEmail: string;
-        temporaryAddress: string;
-        permanentAddress: string;
-        emergencyContactName: string;
-        emergencyContactRelation: string;
-        emergencyContactPhone: string;
-        highestDegree: string;
-        university: string;
-        major: string;
-        otherCertificates: string;
-        languages: string;
-        languageLevel: string;
-        socialInsuranceCode: string;
-        taxCode: string;
-        department: string;
-        position: string;
-        level: string;
-        title: string;
-        contractType: string;
-        startDate: Date;
-        contractDuration: string;
-        endDate: Date;
-        probationSalary: import("generated/prisma/runtime/library").Decimal;
-        officialSalary: import("generated/prisma/runtime/library").Decimal;
-        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
-        mealAllowance: import("generated/prisma/runtime/library").Decimal;
-        transportAllowance: import("generated/prisma/runtime/library").Decimal;
-        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
-        performanceBonus: import("generated/prisma/runtime/library").Decimal;
-        hireDate: Date;
-        joinDate: Date;
-        status: import("generated/prisma").$Enums.employment_status_enum;
-        departmentId: string;
-        benefits: {
-            id: string;
-            type: string;
-            amount: import("generated/prisma/runtime/library").Decimal;
-            startDate: Date;
-            endDate: Date;
-            isActive: boolean;
-            notes: string;
+        isActive: boolean;
+        contact: {
+            staff_code: string;
+            id: number;
+            temp_address: string | null;
+            permant_address: string | null;
+        };
+        emergency_contact: {
+            staff_code: string;
+            id: number;
+            phone_number: string | null;
+            email: string | null;
+            name_emergency: string | null;
+            relationship: string | null;
+            rela_phone: string | null;
+        };
+        citizen_id: {
+            staff_code: string;
+            id: number;
+            cccd: string;
+            date_issue: Date | null;
+            place_issue: string | null;
+            image_front_cccd: string | null;
+            image_back_cccd: string | null;
+        };
+        tax_n_insurance: {
+            staff_code: string;
+            id: number;
+            social_insuran: string | null;
+            tax_code: string | null;
+        };
+        education: {
+            major: string | null;
+            staff_code: string;
+            id: number;
+            degree: string | null;
+            institution: string | null;
+            year: number | null;
+            attachment_image: string | null;
         }[];
-        contacts: {
-            id: string;
-            contactName: string;
-            relationship: string;
-            phone: string;
+        certifications: {
+            level: string | null;
+            staff_code: string;
+            id: number;
+            attachment_image: string | null;
+            language: string | null;
+            score: import("generated/prisma/runtime/library").Decimal | null;
+            issue_at: Date | null;
+            expires_at: Date | null;
         }[];
-        documents: {
-            id: string;
-            docType: string;
-            filePath: string;
-            issueDate: Date;
-            expiryDate: Date;
+        pos_info: {
+            position: string | null;
+            staff_code: string;
+            id: number;
+            department_id: number | null;
+            effective_date: Date | null;
+        }[];
+        salary: {
+            staff_code: string;
+            id: number;
+            effective_date: Date | null;
+            base_salary: import("generated/prisma/runtime/library").Decimal;
+            perform_bonus: import("generated/prisma/runtime/library").Decimal | null;
+        }[];
+        resign_info: {
+            staff_code: string;
+            id: number;
+            leave_day: Date | null;
+            items_employee: string | null;
+            items_company: string | null;
+            social_insuran_detach: string | null;
+            terminate_decision: string | null;
+            tax_withhold_paper: string | null;
+        };
+        contract: {
+            staff_code: string;
+            id: number;
+            type: number | null;
+            start_date: Date | null;
+            end_date: Date | null;
+        }[];
+        insurances: {
+            staff_code: string | null;
+            id: number;
+            month: Date;
+            staff_bhxh: import("generated/prisma/runtime/library").Decimal | null;
+            staff_bhyt: import("generated/prisma/runtime/library").Decimal | null;
+            staff_bhtn: import("generated/prisma/runtime/library").Decimal | null;
+            company_contribution: import("generated/prisma/runtime/library").Decimal | null;
+            created_by: string | null;
+        }[];
+        tax: {
+            staff_code: string;
+            id: number;
+            created_by: string | null;
+            tax_type: string | null;
+            period_type: import("generated/prisma").$Enums.period_type_enum;
+            amount: import("generated/prisma/runtime/library").Decimal | null;
+            dependents: number;
+            update_at: Date;
+        }[];
+        attendance: {
+            staff_code: string;
+            id: number;
+            checkin: Date | null;
+            checkout: Date | null;
+            atten_type: import("generated/prisma").$Enums.attendance_type_enum;
+            leave_req_id: number | null;
+        }[];
+        leave_requests: {
+            status: import("generated/prisma").$Enums.leave_status_enum;
+            staff_code: string;
+            id: number;
+            start_date: Date | null;
+            end_date: Date | null;
+            note: string | null;
+            req_at: Date;
+            absent_id: number | null;
         }[];
     }>;
     update(id: string, dto: UpdateEmployeeDto): Promise<{
         id: string;
         employeeCode: string;
         fullName: string;
-        email: string;
-        phone: string;
-        dob: Date;
-        birthPlace: string;
-        gender: string;
-        cccdNumber: string;
-        cccdIssueDate: Date;
-        cccdIssuePlace: string;
+        dateBirth: Date;
+        placeBirth: string;
+        gender: import("generated/prisma").$Enums.gender_enum;
         maritalStatus: string;
-        personalPhone: string;
-        personalEmail: string;
-        temporaryAddress: string;
-        permanentAddress: string;
-        emergencyContactName: string;
-        emergencyContactRelation: string;
-        emergencyContactPhone: string;
-        highestDegree: string;
-        university: string;
-        major: string;
-        otherCertificates: string;
-        languages: string;
-        languageLevel: string;
-        socialInsuranceCode: string;
-        taxCode: string;
-        department: string;
-        position: string;
-        level: string;
-        title: string;
-        contractType: string;
-        startDate: Date;
-        contractDuration: string;
-        endDate: Date;
-        probationSalary: import("generated/prisma/runtime/library").Decimal;
-        officialSalary: import("generated/prisma/runtime/library").Decimal;
-        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
-        mealAllowance: import("generated/prisma/runtime/library").Decimal;
-        transportAllowance: import("generated/prisma/runtime/library").Decimal;
-        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
-        performanceBonus: import("generated/prisma/runtime/library").Decimal;
-        hireDate: Date;
-        joinDate: Date;
-        status: import("generated/prisma").$Enums.employment_status_enum;
-        departmentId: string;
-        benefits: {
-            id: string;
-            type: string;
-            amount: import("generated/prisma/runtime/library").Decimal;
-            startDate: Date;
-            endDate: Date;
-            isActive: boolean;
-            notes: string;
+        isActive: boolean;
+        contact: {
+            staff_code: string;
+            id: number;
+            temp_address: string | null;
+            permant_address: string | null;
+        };
+        emergency_contact: {
+            staff_code: string;
+            id: number;
+            phone_number: string | null;
+            email: string | null;
+            name_emergency: string | null;
+            relationship: string | null;
+            rela_phone: string | null;
+        };
+        citizen_id: {
+            staff_code: string;
+            id: number;
+            cccd: string;
+            date_issue: Date | null;
+            place_issue: string | null;
+            image_front_cccd: string | null;
+            image_back_cccd: string | null;
+        };
+        tax_n_insurance: {
+            staff_code: string;
+            id: number;
+            social_insuran: string | null;
+            tax_code: string | null;
+        };
+        education: {
+            major: string | null;
+            staff_code: string;
+            id: number;
+            degree: string | null;
+            institution: string | null;
+            year: number | null;
+            attachment_image: string | null;
         }[];
-        contacts: {
-            id: string;
-            contactName: string;
-            relationship: string;
-            phone: string;
+        certifications: {
+            level: string | null;
+            staff_code: string;
+            id: number;
+            attachment_image: string | null;
+            language: string | null;
+            score: import("generated/prisma/runtime/library").Decimal | null;
+            issue_at: Date | null;
+            expires_at: Date | null;
         }[];
-        documents: {
-            id: string;
-            docType: string;
-            filePath: string;
-            issueDate: Date;
-            expiryDate: Date;
+        pos_info: {
+            position: string | null;
+            staff_code: string;
+            id: number;
+            department_id: number | null;
+            effective_date: Date | null;
+        }[];
+        salary: {
+            staff_code: string;
+            id: number;
+            effective_date: Date | null;
+            base_salary: import("generated/prisma/runtime/library").Decimal;
+            perform_bonus: import("generated/prisma/runtime/library").Decimal | null;
+        }[];
+        resign_info: {
+            staff_code: string;
+            id: number;
+            leave_day: Date | null;
+            items_employee: string | null;
+            items_company: string | null;
+            social_insuran_detach: string | null;
+            terminate_decision: string | null;
+            tax_withhold_paper: string | null;
+        };
+        contract: {
+            staff_code: string;
+            id: number;
+            type: number | null;
+            start_date: Date | null;
+            end_date: Date | null;
+        }[];
+        insurances: {
+            staff_code: string | null;
+            id: number;
+            month: Date;
+            staff_bhxh: import("generated/prisma/runtime/library").Decimal | null;
+            staff_bhyt: import("generated/prisma/runtime/library").Decimal | null;
+            staff_bhtn: import("generated/prisma/runtime/library").Decimal | null;
+            company_contribution: import("generated/prisma/runtime/library").Decimal | null;
+            created_by: string | null;
+        }[];
+        tax: {
+            staff_code: string;
+            id: number;
+            created_by: string | null;
+            tax_type: string | null;
+            period_type: import("generated/prisma").$Enums.period_type_enum;
+            amount: import("generated/prisma/runtime/library").Decimal | null;
+            dependents: number;
+            update_at: Date;
+        }[];
+        attendance: {
+            staff_code: string;
+            id: number;
+            checkin: Date | null;
+            checkout: Date | null;
+            atten_type: import("generated/prisma").$Enums.attendance_type_enum;
+            leave_req_id: number | null;
+        }[];
+        leave_requests: {
+            status: import("generated/prisma").$Enums.leave_status_enum;
+            staff_code: string;
+            id: number;
+            start_date: Date | null;
+            end_date: Date | null;
+            note: string | null;
+            req_at: Date;
+            absent_id: number | null;
         }[];
     }>;
     remove(id: string, hard: boolean): Promise<{
@@ -256,19 +427,13 @@ export declare class EmployeesService {
         success: boolean;
     }>;
     listSalaries(id: string): Promise<{
-        id: string;
-        baseSalary: import("generated/prisma/runtime/library").Decimal;
-        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
-        mealAllowance: import("generated/prisma/runtime/library").Decimal;
-        transportAllowance: import("generated/prisma/runtime/library").Decimal;
-        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
-        performanceBonus: import("generated/prisma/runtime/library").Decimal;
-        effectiveDate: Date;
-        isActive: boolean;
+        staff_code: string;
+        id: number;
+        effective_date: Date | null;
+        base_salary: import("generated/prisma/runtime/library").Decimal;
+        perform_bonus: import("generated/prisma/runtime/library").Decimal | null;
     }[]>;
-    addSalary(id: string, dto: CreateSalaryDto): Promise<{
-        success: boolean;
-    }>;
+    addSalary(id: string, dto: CreateSalaryDto): Promise<any>;
     updateSalary(id: string, salaryId: string, dto: CreateSalaryDto): Promise<{
         success: boolean;
     }>;
@@ -276,83 +441,31 @@ export declare class EmployeesService {
         success: boolean;
     }>;
     getCurrentSalary(id: string): Promise<{
-        id: string;
-        baseSalary: import("generated/prisma/runtime/library").Decimal;
-        fuelAllowance: import("generated/prisma/runtime/library").Decimal;
-        mealAllowance: import("generated/prisma/runtime/library").Decimal;
-        transportAllowance: import("generated/prisma/runtime/library").Decimal;
-        uniformAllowance: import("generated/prisma/runtime/library").Decimal;
-        performanceBonus: import("generated/prisma/runtime/library").Decimal;
-        effectiveDate: Date;
-        isActive: boolean;
+        staff_code: string;
+        id: number;
+        effective_date: Date | null;
+        base_salary: import("generated/prisma/runtime/library").Decimal;
+        perform_bonus: import("generated/prisma/runtime/library").Decimal | null;
     }>;
-    listBenefits(id: string): Promise<{
-        id: string;
-        type: string;
-        amount: import("generated/prisma/runtime/library").Decimal;
-        startDate: Date;
-        endDate: Date;
-        isActive: boolean;
-        notes: string;
-    }[]>;
-    addBenefit(id: string, dto: CreateBenefitDto): Promise<{
-        id: string;
-        amount: import("generated/prisma/runtime/library").Decimal;
-        startDate: Date;
-        endDate: Date;
-        isActive: boolean;
-        notes: string;
-    }>;
-    updateBenefit(id: string, benefitId: string, dto: CreateBenefitDto): Promise<{
-        id: string;
-        amount: import("generated/prisma/runtime/library").Decimal;
-        startDate: Date;
-        endDate: Date;
-        isActive: boolean;
-        notes: string;
-    }>;
-    deleteBenefit(id: string, benefitId: string): Promise<{
-        success: boolean;
-    }>;
-    listContacts(id: string): Promise<{
-        id: string;
-        contactName: string;
-        relationship: string;
-        phone: string;
-    }[]>;
+    listBenefits(id: string): Promise<any[]>;
+    addBenefit(id: string, dto: CreateBenefitDto): Promise<any>;
+    updateBenefit(id: string, benefitId: string, dto: CreateBenefitDto): Promise<any>;
+    deleteBenefit(id: string, benefitId: string): Promise<any>;
+    listContacts(id: string): Promise<any[]>;
     addContact(id: string, dto: {
         contactName: string;
         relationship?: string;
         phone?: string;
-    }): Promise<{
-        id: string;
-        contactName: string;
-        relationship: string;
-        phone: string;
-    }>;
+    }): Promise<any>;
     deleteContact(id: string, contactId: string): Promise<{
         success: boolean;
     }>;
-    listDocuments(id: string): Promise<{
-        id: string;
-        docType: string;
-        filePath: string;
-        issueDate: Date;
-        expiryDate: Date;
-    }[]>;
+    listDocuments(id: string): Promise<any[]>;
     addDocument(id: string, dto: {
         docType: string;
         filePath?: string;
         issueDate?: string;
         expiryDate?: string;
-    }): Promise<{
-        id: string;
-        docType: string;
-        filePath: string;
-        issueDate: Date;
-        expiryDate: Date;
-    }>;
-    deleteDocument(id: string, docId: string): Promise<{
-        success: boolean;
-    }>;
+    }): Promise<any>;
+    deleteDocument(id: string, docId: string): Promise<any>;
 }

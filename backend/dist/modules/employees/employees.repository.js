@@ -23,24 +23,15 @@ let EmployeesRepository = class EmployeesRepository {
         const where = {};
         if (q) {
             where.OR = [
-                { employee_code: { contains: q, mode: 'insensitive' } },
+                { staff_code: { contains: q, mode: 'insensitive' } },
                 { full_name: { contains: q, mode: 'insensitive' } },
-                { email: { contains: q, mode: 'insensitive' } },
-                { phone: { contains: q, mode: 'insensitive' } },
             ];
         }
         if (status?.length) {
-            where.status = { in: status };
+            where.is_active = status.includes('Active') ? true : undefined;
         }
         if (departmentId) {
-            where.department_id = BigInt(departmentId);
-        }
-        if (joinDateFrom || joinDateTo) {
-            where.join_date = {};
-            if (joinDateFrom)
-                where.join_date.gte = new Date(joinDateFrom);
-            if (joinDateTo)
-                where.join_date.lte = new Date(joinDateTo);
+            where.pos_info = { some: { department_id: Number(departmentId) } };
         }
         const orderBy = [];
         if (sort) {
@@ -50,48 +41,39 @@ let EmployeesRepository = class EmployeesRepository {
                 const dir = direction?.toLowerCase() === 'desc' ? 'desc' : 'asc';
                 switch (field) {
                     case 'employeeCode':
-                        orderBy.push({ employee_code: dir });
+                        orderBy.push({ staff_code: dir });
                         break;
                     case 'fullName':
                         orderBy.push({ full_name: dir });
                         break;
-                    case 'email':
-                        orderBy.push({ email: dir });
-                        break;
-                    case 'joinDate':
-                        orderBy.push({ join_date: dir });
-                        break;
                     case 'status':
-                        orderBy.push({ status: dir });
+                        orderBy.push({ is_active: dir });
                         break;
                 }
             }
         }
         if (orderBy.length === 0) {
-            orderBy.push({ employee_id: 'desc' });
+            orderBy.push({ id: 'desc' });
         }
         const [employees, total] = await Promise.all([
-            this.prisma.employees.findMany({
+            this.prisma.staff_info.findMany({
                 where,
                 skip,
                 take,
                 orderBy,
                 include: {
-                    departments_employees_department_idTodepartments: true
+                    pos_info: true,
                 }
             }),
-            this.prisma.employees.count({ where })
+            this.prisma.staff_info.count({ where })
         ]);
         const items = employees.map(emp => ({
-            id: emp.employee_id.toString(),
-            employeeCode: emp.employee_code,
+            id: String(emp.id),
+            employeeCode: emp.staff_code,
             fullName: emp.full_name,
-            email: emp.email,
-            phone: emp.phone,
-            joinDate: emp.join_date,
-            status: emp.status,
-            department: emp.departments_employees_department_idTodepartments?.name || emp.department || null,
-            position: emp.position || null,
+            status: emp.is_active ? 'Active' : 'Inactive',
+            department: emp.pos_info?.[0]?.department_id ?? null,
+            position: emp.pos_info?.[0]?.position ?? null,
         }));
         return {
             items,
@@ -102,267 +84,111 @@ let EmployeesRepository = class EmployeesRepository {
         };
     }
     async findDetailById(id) {
-        const employee = await this.prisma.employees.findUnique({
-            where: { employee_id: BigInt(id) },
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(id) },
             include: {
-                departments_employees_department_idTodepartments: true,
-                employee_benefits: {
-                    include: {
-                        benefit_types: true
-                    },
-                    orderBy: { start_date: 'desc' }
-                },
-                employee_contacts: true,
-                employee_documents: true
+                staff_acc: true,
+                citizen_id: true,
+                contact: true,
+                emergency_contact: true,
+                tax_n_insurance: true,
+                education: true,
+                certifications: true,
+                pos_info: true,
+                salary: true,
+                resign_info: true,
+                contract: true,
+                insurances: true,
+                tax: true,
+                attendance: true,
+                leave_requests: true,
             }
         });
         if (!employee)
             return null;
         return {
-            id: employee.employee_id.toString(),
-            employeeCode: employee.employee_code,
+            id: String(employee.id),
+            employeeCode: employee.staff_code,
             fullName: employee.full_name,
-            email: employee.email,
-            phone: employee.phone,
-            dob: employee.dob,
-            birthPlace: employee.birth_place,
+            dateBirth: employee.date_birth,
+            placeBirth: employee.place_birth,
             gender: employee.gender,
-            cccdNumber: employee.cccd_number,
-            cccdIssueDate: employee.cccd_issue_date,
-            cccdIssuePlace: employee.cccd_issue_place,
             maritalStatus: employee.marital_status,
-            personalPhone: employee.personal_phone,
-            personalEmail: employee.personal_email,
-            temporaryAddress: employee.temporary_address,
-            permanentAddress: employee.permanent_address,
-            emergencyContactName: employee.emergency_contact_name,
-            emergencyContactRelation: employee.emergency_contact_relation,
-            emergencyContactPhone: employee.emergency_contact_phone,
-            highestDegree: employee.highest_degree,
-            university: employee.university,
-            major: employee.major,
-            otherCertificates: employee.other_certificates,
-            languages: employee.languages,
-            languageLevel: employee.language_level,
-            socialInsuranceCode: employee.social_insurance_code,
-            taxCode: employee.tax_code,
-            department: employee.department,
-            position: employee.position,
-            level: employee.level,
-            title: employee.title,
-            contractType: employee.contract_type,
-            startDate: employee.start_date,
-            contractDuration: employee.contract_duration,
-            endDate: employee.end_date,
-            probationSalary: employee.probation_salary,
-            officialSalary: employee.official_salary,
-            fuelAllowance: employee.fuel_allowance,
-            mealAllowance: employee.meal_allowance,
-            transportAllowance: employee.transport_allowance,
-            uniformAllowance: employee.uniform_allowance,
-            performanceBonus: employee.performance_bonus,
-            hireDate: employee.hire_date,
-            joinDate: employee.join_date,
-            status: employee.status,
-            departmentId: employee.department_id?.toString(),
-            benefits: employee.employee_benefits.map(ben => ({
-                id: ben.benefit_id.toString(),
-                type: ben.benefit_types?.name,
-                amount: ben.amount,
-                startDate: ben.start_date,
-                endDate: ben.end_date,
-                isActive: ben.is_active,
-                notes: ben.notes
-            })),
-            contacts: employee.employee_contacts.map(contact => ({
-                id: contact.contact_id.toString(),
-                contactName: contact.contact_name,
-                relationship: contact.relationship,
-                phone: contact.phone
-            })),
-            documents: employee.employee_documents.map(doc => ({
-                id: doc.doc_id.toString(),
-                docType: doc.doc_type,
-                filePath: doc.file_path,
-                issueDate: doc.issue_date,
-                expiryDate: doc.expiry_date
-            }))
+            isActive: employee.is_active,
+            contact: employee.contact ?? null,
+            emergency_contact: employee.emergency_contact ?? null,
+            citizen_id: employee.citizen_id ?? null,
+            tax_n_insurance: employee.tax_n_insurance ?? null,
+            education: employee.education,
+            certifications: employee.certifications,
+            pos_info: employee.pos_info,
+            salary: employee.salary,
+            resign_info: employee.resign_info ?? null,
+            contract: employee.contract,
+            insurances: employee.insurances,
+            tax: employee.tax,
+            attendance: employee.attendance,
+            leave_requests: employee.leave_requests,
         };
     }
     async findBasicById(id) {
-        const employee = await this.prisma.employees.findUnique({
-            where: { employee_id: BigInt(id) },
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(id) },
             select: {
-                employee_id: true,
-                employee_code: true,
+                id: true,
+                staff_code: true,
                 full_name: true,
-                email: true,
-                status: true
+                is_active: true,
             }
         });
         if (!employee)
             return null;
         return {
-            id: employee.employee_id.toString(),
-            employeeCode: employee.employee_code,
+            id: String(employee.id),
+            employeeCode: employee.staff_code,
             fullName: employee.full_name,
-            email: employee.email,
-            status: employee.status
+            status: employee.is_active ? 'Active' : 'Inactive'
         };
     }
     async create(dto) {
-        const employee = await this.prisma.employees.create({
+        const employee = await this.prisma.staff_info.create({
             data: {
-                employee_code: dto.employeeCode || `EMP${Date.now()}`,
+                staff_code: dto.employeeCode || `EMP${Date.now()}`,
                 full_name: dto.fullName,
-                email: dto.email,
-                phone: dto.phone,
-                dob: dto.dob ? new Date(dto.dob) : null,
-                birth_place: dto.birthPlace,
-                gender: dto.gender,
-                cccd_number: dto.cccdNumber,
-                cccd_issue_date: dto.cccdIssueDate ? new Date(dto.cccdIssueDate) : null,
-                cccd_issue_place: dto.cccdIssuePlace,
+                date_birth: dto.dob ? new Date(dto.dob) : null,
+                place_birth: dto.birthPlace,
+                gender: dto.gender ?? null,
                 marital_status: dto.maritalStatus,
-                personal_phone: dto.personalPhone,
-                personal_email: dto.personalEmail,
-                temporary_address: dto.temporaryAddress,
-                permanent_address: dto.permanentAddress,
-                emergency_contact_name: dto.emergencyContactName,
-                emergency_contact_relation: dto.emergencyContactRelation,
-                emergency_contact_phone: dto.emergencyContactPhone,
-                highest_degree: dto.highestDegree,
-                university: dto.university,
-                major: dto.major,
-                other_certificates: dto.otherCertificates,
-                languages: dto.languages,
-                language_level: dto.languageLevel,
-                social_insurance_code: dto.socialInsuranceCode,
-                tax_code: dto.taxCode,
-                department: dto.department,
-                position: dto.position,
-                level: dto.level,
-                title: dto.title,
-                contract_type: dto.contractType,
-                start_date: dto.startDate ? new Date(dto.startDate) : null,
-                contract_duration: dto.contractDuration,
-                end_date: dto.endDate ? new Date(dto.endDate) : null,
-                probation_salary: dto.probationSalary ? parseFloat(dto.probationSalary) : null,
-                official_salary: dto.officialSalary ? parseFloat(dto.officialSalary) : null,
-                fuel_allowance: dto.fuelAllowance ? parseFloat(dto.fuelAllowance) : null,
-                meal_allowance: dto.mealAllowance ? parseFloat(dto.mealAllowance) : null,
-                transport_allowance: dto.transportAllowance ? parseFloat(dto.transportAllowance) : null,
-                uniform_allowance: dto.uniformAllowance ? parseFloat(dto.uniformAllowance) : null,
-                performance_bonus: dto.performanceBonus ? parseFloat(dto.performanceBonus) : null,
-                hire_date: dto.hireDate ? new Date(dto.hireDate) : new Date(),
-                join_date: dto.joinDate ? new Date(dto.joinDate) : null,
-                status: dto.status || 'Active',
-                department_id: dto.departmentId ? BigInt(dto.departmentId) : null
+                is_active: dto.status ? dto.status === 'Active' : true,
             }
         });
-        return this.findDetailById(employee.employee_id.toString());
+        return this.findDetailById(String(employee.id));
     }
     async update(id, dto) {
         const updateData = {};
         if (dto.employeeCode !== undefined)
-            updateData.employee_code = dto.employeeCode;
+            updateData.staff_code = dto.employeeCode;
         if (dto.fullName !== undefined)
             updateData.full_name = dto.fullName;
-        if (dto.email !== undefined)
-            updateData.email = dto.email;
-        if (dto.phone !== undefined)
-            updateData.phone = dto.phone;
         if (dto.dob !== undefined)
-            updateData.dob = dto.dob ? new Date(dto.dob) : null;
+            updateData.date_birth = dto.dob ? new Date(dto.dob) : null;
         if (dto.birthPlace !== undefined)
-            updateData.birth_place = dto.birthPlace;
+            updateData.place_birth = dto.birthPlace;
         if (dto.gender !== undefined)
             updateData.gender = dto.gender;
-        if (dto.cccdNumber !== undefined)
-            updateData.cccd_number = dto.cccdNumber;
-        if (dto.cccdIssueDate !== undefined)
-            updateData.cccd_issue_date = dto.cccdIssueDate ? new Date(dto.cccdIssueDate) : null;
-        if (dto.cccdIssuePlace !== undefined)
-            updateData.cccd_issue_place = dto.cccdIssuePlace;
         if (dto.maritalStatus !== undefined)
             updateData.marital_status = dto.maritalStatus;
-        if (dto.personalPhone !== undefined)
-            updateData.personal_phone = dto.personalPhone;
-        if (dto.personalEmail !== undefined)
-            updateData.personal_email = dto.personalEmail;
-        if (dto.temporaryAddress !== undefined)
-            updateData.temporary_address = dto.temporaryAddress;
-        if (dto.permanentAddress !== undefined)
-            updateData.permanent_address = dto.permanentAddress;
-        if (dto.emergencyContactName !== undefined)
-            updateData.emergency_contact_name = dto.emergencyContactName;
-        if (dto.emergencyContactRelation !== undefined)
-            updateData.emergency_contact_relation = dto.emergencyContactRelation;
-        if (dto.emergencyContactPhone !== undefined)
-            updateData.emergency_contact_phone = dto.emergencyContactPhone;
-        if (dto.highestDegree !== undefined)
-            updateData.highest_degree = dto.highestDegree;
-        if (dto.university !== undefined)
-            updateData.university = dto.university;
-        if (dto.major !== undefined)
-            updateData.major = dto.major;
-        if (dto.otherCertificates !== undefined)
-            updateData.other_certificates = dto.otherCertificates;
-        if (dto.languages !== undefined)
-            updateData.languages = dto.languages;
-        if (dto.languageLevel !== undefined)
-            updateData.language_level = dto.languageLevel;
-        if (dto.socialInsuranceCode !== undefined)
-            updateData.social_insurance_code = dto.socialInsuranceCode;
-        if (dto.taxCode !== undefined)
-            updateData.tax_code = dto.taxCode;
-        if (dto.department !== undefined)
-            updateData.department = dto.department;
-        if (dto.position !== undefined)
-            updateData.position = dto.position;
-        if (dto.level !== undefined)
-            updateData.level = dto.level;
-        if (dto.title !== undefined)
-            updateData.title = dto.title;
-        if (dto.contractType !== undefined)
-            updateData.contract_type = dto.contractType;
-        if (dto.startDate !== undefined)
-            updateData.start_date = dto.startDate ? new Date(dto.startDate) : null;
-        if (dto.contractDuration !== undefined)
-            updateData.contract_duration = dto.contractDuration;
-        if (dto.endDate !== undefined)
-            updateData.end_date = dto.endDate ? new Date(dto.endDate) : null;
-        if (dto.probationSalary !== undefined)
-            updateData.probation_salary = dto.probationSalary ? parseFloat(dto.probationSalary) : null;
-        if (dto.officialSalary !== undefined)
-            updateData.official_salary = dto.officialSalary ? parseFloat(dto.officialSalary) : null;
-        if (dto.fuelAllowance !== undefined)
-            updateData.fuel_allowance = dto.fuelAllowance ? parseFloat(dto.fuelAllowance) : null;
-        if (dto.mealAllowance !== undefined)
-            updateData.meal_allowance = dto.mealAllowance ? parseFloat(dto.mealAllowance) : null;
-        if (dto.transportAllowance !== undefined)
-            updateData.transport_allowance = dto.transportAllowance ? parseFloat(dto.transportAllowance) : null;
-        if (dto.uniformAllowance !== undefined)
-            updateData.uniform_allowance = dto.uniformAllowance ? parseFloat(dto.uniformAllowance) : null;
-        if (dto.performanceBonus !== undefined)
-            updateData.performance_bonus = dto.performanceBonus ? parseFloat(dto.performanceBonus) : null;
-        if (dto.hireDate !== undefined)
-            updateData.hire_date = dto.hireDate ? new Date(dto.hireDate) : null;
-        if (dto.joinDate !== undefined)
-            updateData.join_date = dto.joinDate ? new Date(dto.joinDate) : null;
         if (dto.status !== undefined)
-            updateData.status = dto.status;
-        if (dto.departmentId !== undefined)
-            updateData.department_id = dto.departmentId ? BigInt(dto.departmentId) : null;
-        const employee = await this.prisma.employees.update({
-            where: { employee_id: BigInt(id) },
+            updateData.is_active = dto.status === 'Active';
+        const employee = await this.prisma.staff_info.update({
+            where: { id: Number(id) },
             data: updateData
         });
-        return this.findDetailById(employee.employee_id.toString());
+        return this.findDetailById(String(employee.id));
     }
     async delete(id) {
-        await this.prisma.employees.delete({
-            where: { employee_id: BigInt(id) }
+        await this.prisma.staff_info.delete({
+            where: { id: Number(id) }
         });
         return { success: true };
     }
@@ -371,20 +197,17 @@ let EmployeesRepository = class EmployeesRepository {
             return this.delete(id);
         }
         else {
-            await this.prisma.employees.update({
-                where: { employee_id: BigInt(id) },
-                data: { status: 'Terminated' }
+            await this.prisma.staff_info.update({
+                where: { id: Number(id) },
+                data: { is_active: false }
             });
             return { success: true };
         }
     }
     async terminate(id, body) {
-        await this.prisma.employees.update({
-            where: { employee_id: BigInt(id) },
-            data: {
-                status: 'Terminated',
-                end_date: body.terminationDate ? new Date(body.terminationDate) : new Date()
-            }
+        await this.prisma.staff_info.update({
+            where: { id: Number(id) },
+            data: { is_active: false }
         });
         return { success: true };
     }
@@ -401,46 +224,32 @@ let EmployeesRepository = class EmployeesRepository {
         return { success: true };
     }
     async listSalaries(id) {
-        const employee = await this.prisma.employees.findUnique({
-            where: { employee_id: BigInt(id) },
-            select: {
-                probation_salary: true,
-                official_salary: true,
-                fuel_allowance: true,
-                meal_allowance: true,
-                transport_allowance: true,
-                uniform_allowance: true,
-                performance_bonus: true
-            }
+        const items = await this.prisma.salary.findMany({
+            where: { staff_code: { equals: (await this.prisma.staff_info.findUnique({ where: { id: Number(id) }, select: { staff_code: true } }))?.staff_code ?? '' } },
+            orderBy: { effective_date: 'desc' }
         });
-        if (!employee)
-            return [];
-        return [{
-                id: '1',
-                baseSalary: employee.official_salary || employee.probation_salary,
-                fuelAllowance: employee.fuel_allowance,
-                mealAllowance: employee.meal_allowance,
-                transportAllowance: employee.transport_allowance,
-                uniformAllowance: employee.uniform_allowance,
-                performanceBonus: employee.performance_bonus,
-                effectiveDate: new Date(),
-                isActive: true
-            }];
+        return items;
     }
     async addSalary(employeeId, dto) {
-        await this.prisma.employees.update({
-            where: { employee_id: BigInt(employeeId) },
+        const staff = await this.prisma.staff_info.findUnique({ where: { id: Number(employeeId) }, select: { staff_code: true } });
+        if (!staff?.staff_code)
+            return { success: false };
+        await this.prisma.salary.create({
             data: {
-                official_salary: parseFloat(dto.baseSalary)
+                staff_code: staff.staff_code,
+                base_salary: parseFloat(dto.baseSalary),
+                perform_bonus: dto.notes ? undefined : undefined,
+                effective_date: dto.effectiveDate ? new Date(dto.effectiveDate) : null,
             }
         });
         return { success: true };
     }
     async updateSalary(id, salaryId, dto) {
-        await this.prisma.employees.update({
-            where: { employee_id: BigInt(id) },
+        await this.prisma.salary.update({
+            where: { id: Number(salaryId) },
             data: {
-                official_salary: parseFloat(dto.baseSalary)
+                base_salary: parseFloat(dto.baseSalary),
+                effective_date: dto.effectiveDate ? new Date(dto.effectiveDate) : null,
             }
         });
         return { success: true };
@@ -453,174 +262,92 @@ let EmployeesRepository = class EmployeesRepository {
         return salaries[0] || null;
     }
     async listBenefits(id) {
-        const benefits = await this.prisma.employee_benefits.findMany({
-            where: { employee_id: BigInt(id) },
-            include: { benefit_types: true },
-            orderBy: { start_date: 'desc' }
-        });
-        return benefits.map(ben => ({
-            id: ben.benefit_id.toString(),
-            type: ben.benefit_types?.name,
-            amount: ben.amount,
-            startDate: ben.start_date,
-            endDate: ben.end_date,
-            isActive: ben.is_active,
-            notes: ben.notes
-        }));
+        return [];
     }
     async addBenefit(employeeId, dto) {
-        const benefit = await this.prisma.employee_benefits.create({
-            data: {
-                employee_id: BigInt(employeeId),
-                type_id: BigInt(dto.typeId),
-                amount: dto.amount ? parseFloat(dto.amount) : null,
-                start_date: new Date(dto.startDate),
-                end_date: dto.endDate ? new Date(dto.endDate) : null,
-                is_active: dto.isActive ?? true,
-                notes: dto.notes
-            }
-        });
-        return {
-            id: benefit.benefit_id.toString(),
-            amount: benefit.amount,
-            startDate: benefit.start_date,
-            endDate: benefit.end_date,
-            isActive: benefit.is_active,
-            notes: benefit.notes
-        };
+        return { success: false };
     }
     async updateBenefit(id, benefitId, dto) {
-        const benefit = await this.prisma.employee_benefits.update({
-            where: {
-                benefit_id: BigInt(benefitId),
-                employee_id: BigInt(id)
-            },
-            data: {
-                type_id: dto.typeId ? BigInt(dto.typeId) : undefined,
-                amount: dto.amount ? parseFloat(dto.amount) : undefined,
-                start_date: dto.startDate ? new Date(dto.startDate) : undefined,
-                end_date: dto.endDate ? new Date(dto.endDate) : undefined,
-                is_active: dto.isActive,
-                notes: dto.notes
-            }
-        });
-        return {
-            id: benefit.benefit_id.toString(),
-            amount: benefit.amount,
-            startDate: benefit.start_date,
-            endDate: benefit.end_date,
-            isActive: benefit.is_active,
-            notes: benefit.notes
-        };
+        return { success: false };
     }
     async deleteBenefit(id, benefitId) {
-        await this.prisma.employee_benefits.delete({
-            where: {
-                benefit_id: BigInt(benefitId),
-                employee_id: BigInt(id)
-            }
-        });
-        return { success: true };
+        return { success: false };
     }
     async listContacts(id) {
-        const contacts = await this.prisma.employee_contacts.findMany({
-            where: { employee_id: BigInt(id) }
-        });
-        return contacts.map(contact => ({
-            id: contact.contact_id.toString(),
-            contactName: contact.contact_name,
-            relationship: contact.relationship,
-            phone: contact.phone
-        }));
+        const staff = await this.prisma.staff_info.findUnique({ where: { id: Number(id) }, include: { contact: true, emergency_contact: true } });
+        if (!staff)
+            return [];
+        const items = [];
+        if (staff.contact)
+            items.push({ id: String(staff.contact.id), type: 'contact', tempAddress: staff.contact.temp_address, permAddress: staff.contact.permant_address });
+        if (staff.emergency_contact)
+            items.push({ id: String(staff.emergency_contact.id), type: 'emergency', name: staff.emergency_contact.name_emergency, relationship: staff.emergency_contact.relationship, phone: staff.emergency_contact.rela_phone });
+        return items;
     }
     async addContact(id, dto) {
-        const contact = await this.prisma.employee_contacts.create({
+        const staff = await this.prisma.staff_info.findUnique({ where: { id: Number(id) }, select: { staff_code: true } });
+        if (!staff?.staff_code)
+            return { success: false };
+        const created = await this.prisma.contact.create({
             data: {
-                employee_id: BigInt(id),
-                contact_name: dto.contactName,
-                relationship: dto.relationship,
-                phone: dto.phone
+                staff_code: staff.staff_code,
+                temp_address: dto.temporaryAddress ?? null,
+                permant_address: dto.permanentAddress ?? null,
             }
         });
-        return {
-            id: contact.contact_id.toString(),
-            contactName: contact.contact_name,
-            relationship: contact.relationship,
-            phone: contact.phone
-        };
+        return { id: String(created.id) };
     }
     async deleteContact(id, contactId) {
-        await this.prisma.employee_contacts.delete({
-            where: {
-                contact_id: BigInt(contactId),
-                employee_id: BigInt(id)
-            }
-        });
+        await this.prisma.contact.delete({ where: { id: Number(contactId) } });
         return { success: true };
     }
     async listDocuments(id) {
-        const documents = await this.prisma.employee_documents.findMany({
-            where: { employee_id: BigInt(id) }
-        });
-        return documents.map(doc => ({
-            id: doc.doc_id.toString(),
-            docType: doc.doc_type,
-            filePath: doc.file_path,
-            issueDate: doc.issue_date,
-            expiryDate: doc.expiry_date
-        }));
+        const staff = await this.prisma.staff_info.findUnique({ where: { id: Number(id) }, include: { certifications: true, education: true } });
+        if (!staff)
+            return [];
+        const items = [];
+        items.push(...staff.certifications.map(c => ({ id: String(c.id), docType: 'cert', attachment: c.attachment_image, issueDate: c.issue_at, expiryDate: c.expires_at })));
+        items.push(...staff.education.map(e => ({ id: String(e.id), docType: 'education', attachment: e.attachment_image, year: e.year })));
+        return items;
     }
     async addDocument(id, dto) {
-        const document = await this.prisma.employee_documents.create({
-            data: {
-                employee_id: BigInt(id),
-                doc_type: dto.docType,
-                file_path: dto.filePath,
-                issue_date: dto.issueDate ? new Date(dto.issueDate) : null,
-                expiry_date: dto.expiryDate ? new Date(dto.expiryDate) : null
-            }
-        });
-        return {
-            id: document.doc_id.toString(),
-            docType: document.doc_type,
-            filePath: document.file_path,
-            issueDate: document.issue_date,
-            expiryDate: document.expiry_date
-        };
+        const staff = await this.prisma.staff_info.findUnique({ where: { id: Number(id) }, select: { staff_code: true } });
+        if (!staff?.staff_code)
+            return { success: false };
+        if (dto.docType === 'cert') {
+            const c = await this.prisma.certifications.create({ data: { staff_code: staff.staff_code, attachment_image: dto.filePath ?? null, issue_at: dto.issueDate ? new Date(dto.issueDate) : null, expires_at: dto.expiryDate ? new Date(dto.expiryDate) : null } });
+            return { id: String(c.id) };
+        }
+        if (dto.docType === 'education') {
+            const e = await this.prisma.education.create({ data: { staff_code: staff.staff_code, attachment_image: dto.filePath ?? null, year: dto.year ? Number(dto.year) : null } });
+            return { id: String(e.id) };
+        }
+        return { success: false };
     }
     async deleteDocument(id, docId) {
-        await this.prisma.employee_documents.delete({
-            where: {
-                doc_id: BigInt(docId),
-                employee_id: BigInt(id)
-            }
-        });
-        return { success: true };
+        try {
+            await this.prisma.certifications.delete({ where: { id: Number(docId) } });
+            return { success: true };
+        }
+        catch { }
+        try {
+            await this.prisma.education.delete({ where: { id: Number(docId) } });
+            return { success: true };
+        }
+        catch { }
+        return { success: false };
     }
     async getDepartments() {
-        const departments = await this.prisma.departments.findMany({
-            orderBy: { name: 'asc' }
+        const departments = await this.prisma.department.findMany({
+            orderBy: { department_name: 'asc' }
         });
         return departments.map(dept => ({
             id: dept.department_id.toString(),
-            name: dept.name,
-            managerId: dept.manager_id?.toString(),
-            parentId: dept.parent_id?.toString(),
-            budget: dept.budget
+            name: dept.department_name,
         }));
     }
     async getBenefitTypes() {
-        const types = await this.prisma.benefit_types.findMany({
-            orderBy: { name: 'asc' }
-        });
-        return types.map(type => ({
-            id: type.type_id.toString(),
-            name: type.name,
-            type: type.type,
-            category: type.category,
-            unit: type.unit,
-            description: type.description
-        }));
+        return [];
     }
 };
 exports.EmployeesRepository = EmployeesRepository;

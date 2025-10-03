@@ -15,16 +15,17 @@ class CreatePositionDto {
 }
 exports.CreatePositionDto = CreatePositionDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreatePositionDto.prototype, "title", void 0);
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreatePositionDto.prototype, "departmentId", void 0);
 __decorate([
-    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreatePositionDto.prototype, "startDate", void 0);
+], CreatePositionDto.prototype, "position", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
-], CreatePositionDto.prototype, "endDate", void 0);
+], CreatePositionDto.prototype, "effectiveDate", void 0);
 //# sourceMappingURL=create-position.dto.js.map

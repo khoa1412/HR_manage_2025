@@ -4,7 +4,7 @@ id | staff_name | role | acc_name | password_hash | staff_code
 -- SCHEMA:
     id SERIAL PRIMARY KEY,
     staff_name VARCHAR(50),
-    role VARCHAR(20) CHECK (role IN ('staff','SysAdmin','manager','hr_staff','hr_manager')) NOT NULL,
+    role VARCHAR(20) CHECK (role IN ('staff','chief','hr_staff','hr_manager')) NOT NULL,
     acc_name VARCHAR(15) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     staff_code VARCHAR(20) UNIQUE NOT NULL REFERENCES staff_info(staff_code)
@@ -136,13 +136,22 @@ id | staff_code | leave_day | items_employee | items_company | social_insuran_de
 --
 
 ** lưu ý  : social_insuran_detach, terminate_decision, tax_withhold_paper  TEXT là url đường dẫn chứ không phải text thông thường **
-#Table contract (1-n với staff_info):
-id | staff_code | contract_type | start_date | end_date
+#Table contract_types (bảng master cho loại hợp đồng):
+id | name | description
+
+-- SCHEMA
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT
+--
+
+#Table contract (1-n với staff_info; n-1 với contract_types):
+id | staff_code | type | start_date | end_date
 
 -- SCHEMA
     id SERIAL PRIMARY KEY,
     staff_code VARCHAR(20) NOT NULL REFERENCES staff_info(staff_code),
-    contract_type VARCHAR(50),
+    type INT REFERENCES contract_types(id),
     start_date DATE,
     end_date DATE
 --

@@ -51,13 +51,9 @@ let EmployeesService = class EmployeesService {
         return this.repo.remove(id, hard);
     }
     validateDates(dto, current) {
-        const hire = dto.hireDate ?? current?.hireDate;
-        const join = dto.joinDate ?? current?.joinDate;
         const dob = dto.dob ?? current?.dob;
-        if (hire && join && hire > join)
-            throw new common_1.UnprocessableEntityException('joinDate must be >= hireDate');
-        if (dob && hire && dob > hire)
-            throw new common_1.UnprocessableEntityException('dob must be <= hireDate');
+        if (dob && isNaN(Date.parse(dob)))
+            throw new common_1.UnprocessableEntityException('dob is invalid');
     }
     async terminate(id, body) {
         return this.repo.terminate(id, body);
