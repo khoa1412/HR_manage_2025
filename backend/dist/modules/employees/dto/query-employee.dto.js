@@ -36,24 +36,9 @@ __decorate([
 ], QueryEmployeeDto.prototype, "departmentId", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], QueryEmployeeDto.prototype, "joinDateFrom", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], QueryEmployeeDto.prototype, "joinDateTo", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Transform)(({ value }) => value === true || value === 'true'),
     __metadata("design:type", Boolean)
 ], QueryEmployeeDto.prototype, "hasPosition", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_transformer_1.Transform)(({ value }) => value === true || value === 'true'),
-    __metadata("design:type", Boolean)
-], QueryEmployeeDto.prototype, "hasActiveBenefits", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)(),

@@ -1,10 +1,15 @@
 import { PrismaService } from '../../database/prisma.service';
 import { QueryEmployeeDto } from './dto/query-employee.dto';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto } from './dto/create_dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { CreatePositionDto } from './dto/create-position.dto';
-import { CreateSalaryDto } from './dto/create-salary.dto';
-import { CreateBenefitDto } from './dto/create-benefit.dto';
+import { CreatePositionDto } from './dto/create_dto/create-position.dto';
+import { CreateSalaryDto } from './dto/create_dto/create-salary.dto';
+import { CreateContactDto } from './dto/create_dto/create-contact.dto';
+import { CreateCitizenIdDto } from './dto/create_dto/create-citizen.dto';
+import { CreateEducationDto } from './dto/create_dto/create-education.dto';
+import { CreateStaffAccDto } from './dto/create_dto/create-staff-acc.dto';
+import { CreateTaxInsuranceDto } from './dto/create_dto/create-tax-insurance.dto';
+import { CreateResignInfoDto } from './dto/create_dto/create-resign-info.dto';
 import { Prisma } from '../../../generated/prisma';
 export declare class EmployeesRepository {
     private readonly prisma;
@@ -39,18 +44,18 @@ export declare class EmployeesRepository {
             permant_address: string | null;
         };
         emergency_contact: {
+            email: string | null;
+            relationship: string | null;
             staff_code: string;
             id: number;
             phone_number: string | null;
-            email: string | null;
             name_emergency: string | null;
-            relationship: string | null;
             rela_phone: string | null;
         };
         citizen_id: {
+            cccd: string;
             staff_code: string;
             id: number;
-            cccd: string;
             date_issue: Date | null;
             place_issue: string | null;
             image_front_cccd: string | null;
@@ -63,21 +68,21 @@ export declare class EmployeesRepository {
             tax_code: string | null;
         };
         education: {
-            major: string | null;
-            staff_code: string;
-            id: number;
             degree: string | null;
             institution: string | null;
+            major: string | null;
             year: number | null;
+            staff_code: string;
+            id: number;
             attachment_image: string | null;
         }[];
         certifications: {
             level: string | null;
+            language: string | null;
+            score: Prisma.Decimal | null;
             staff_code: string;
             id: number;
             attachment_image: string | null;
-            language: string | null;
-            score: Prisma.Decimal | null;
             issue_at: Date | null;
             expires_at: Date | null;
         }[];
@@ -173,18 +178,18 @@ export declare class EmployeesRepository {
             permant_address: string | null;
         };
         emergency_contact: {
+            email: string | null;
+            relationship: string | null;
             staff_code: string;
             id: number;
             phone_number: string | null;
-            email: string | null;
             name_emergency: string | null;
-            relationship: string | null;
             rela_phone: string | null;
         };
         citizen_id: {
+            cccd: string;
             staff_code: string;
             id: number;
-            cccd: string;
             date_issue: Date | null;
             place_issue: string | null;
             image_front_cccd: string | null;
@@ -197,21 +202,21 @@ export declare class EmployeesRepository {
             tax_code: string | null;
         };
         education: {
-            major: string | null;
-            staff_code: string;
-            id: number;
             degree: string | null;
             institution: string | null;
+            major: string | null;
             year: number | null;
+            staff_code: string;
+            id: number;
             attachment_image: string | null;
         }[];
         certifications: {
             level: string | null;
+            language: string | null;
+            score: Prisma.Decimal | null;
             staff_code: string;
             id: number;
             attachment_image: string | null;
-            language: string | null;
-            score: Prisma.Decimal | null;
             issue_at: Date | null;
             expires_at: Date | null;
         }[];
@@ -301,18 +306,18 @@ export declare class EmployeesRepository {
             permant_address: string | null;
         };
         emergency_contact: {
+            email: string | null;
+            relationship: string | null;
             staff_code: string;
             id: number;
             phone_number: string | null;
-            email: string | null;
             name_emergency: string | null;
-            relationship: string | null;
             rela_phone: string | null;
         };
         citizen_id: {
+            cccd: string;
             staff_code: string;
             id: number;
-            cccd: string;
             date_issue: Date | null;
             place_issue: string | null;
             image_front_cccd: string | null;
@@ -325,21 +330,21 @@ export declare class EmployeesRepository {
             tax_code: string | null;
         };
         education: {
-            major: string | null;
-            staff_code: string;
-            id: number;
             degree: string | null;
             institution: string | null;
+            major: string | null;
             year: number | null;
+            staff_code: string;
+            id: number;
             attachment_image: string | null;
         }[];
         certifications: {
             level: string | null;
+            language: string | null;
+            score: Prisma.Decimal | null;
             staff_code: string;
             id: number;
             attachment_image: string | null;
-            language: string | null;
-            score: Prisma.Decimal | null;
             issue_at: Date | null;
             expires_at: Date | null;
         }[];
@@ -453,10 +458,6 @@ export declare class EmployeesRepository {
         base_salary: Prisma.Decimal;
         perform_bonus: Prisma.Decimal | null;
     }>;
-    listBenefits(id: string): Promise<any[]>;
-    addBenefit(employeeId: string, dto: CreateBenefitDto): Promise<any>;
-    updateBenefit(id: string, benefitId: string, dto: CreateBenefitDto): Promise<any>;
-    deleteBenefit(id: string, benefitId: string): Promise<any>;
     listContacts(id: string): Promise<any[]>;
     addContact(id: string, dto: any): Promise<any>;
     deleteContact(id: string, contactId: string): Promise<{
@@ -470,4 +471,52 @@ export declare class EmployeesRepository {
         name: string;
     }[]>;
     getBenefitTypes(): Promise<any[]>;
+    createStaffAccount(employeeId: string, dto: CreateStaffAccDto): Promise<{
+        role: import("../../../generated/prisma").$Enums.staff_role_enum;
+        staff_code: string;
+        id: number;
+        staff_name: string | null;
+        acc_name: string;
+        password_hash: string;
+    }>;
+    createContact(employeeId: string, dto: CreateContactDto): Promise<{
+        staff_code: string;
+        id: number;
+        temp_address: string | null;
+        permant_address: string | null;
+    }>;
+    createCitizenId(employeeId: string, dto: CreateCitizenIdDto): Promise<{
+        cccd: string;
+        staff_code: string;
+        id: number;
+        date_issue: Date | null;
+        place_issue: string | null;
+        image_front_cccd: string | null;
+        image_back_cccd: string | null;
+    }>;
+    createEducation(employeeId: string, dto: CreateEducationDto): Promise<{
+        degree: string | null;
+        institution: string | null;
+        major: string | null;
+        year: number | null;
+        staff_code: string;
+        id: number;
+        attachment_image: string | null;
+    }>;
+    createTaxInsurance(employeeId: string, dto: CreateTaxInsuranceDto): Promise<{
+        staff_code: string;
+        id: number;
+        social_insuran: string | null;
+        tax_code: string | null;
+    }>;
+    createResignInfo(employeeId: string, dto: CreateResignInfoDto): Promise<{
+        staff_code: string;
+        id: number;
+        leave_day: Date | null;
+        items_employee: string | null;
+        items_company: string | null;
+        social_insuran_detach: string | null;
+        terminate_decision: string | null;
+        tax_withhold_paper: string | null;
+    }>;
 }

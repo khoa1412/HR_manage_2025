@@ -261,18 +261,6 @@ let EmployeesRepository = class EmployeesRepository {
         const salaries = await this.listSalaries(id);
         return salaries[0] || null;
     }
-    async listBenefits(id) {
-        return [];
-    }
-    async addBenefit(employeeId, dto) {
-        return { success: false };
-    }
-    async updateBenefit(id, benefitId, dto) {
-        return { success: false };
-    }
-    async deleteBenefit(id, benefitId) {
-        return { success: false };
-    }
     async listContacts(id) {
         const staff = await this.prisma.staff_info.findUnique({ where: { id: Number(id) }, include: { contact: true, emergency_contact: true } });
         if (!staff)
@@ -348,6 +336,102 @@ let EmployeesRepository = class EmployeesRepository {
     }
     async getBenefitTypes() {
         return [];
+    }
+    async createStaffAccount(employeeId, dto) {
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(employeeId) }
+        });
+        if (!employee)
+            throw new Error('Employee not found');
+        return this.prisma.staff_acc.create({
+            data: {
+                staff_name: dto.staffName,
+                role: dto.role,
+                acc_name: dto.accName,
+                password_hash: dto.passwordHash,
+                staff_code: employee.staff_code
+            }
+        });
+    }
+    async createContact(employeeId, dto) {
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(employeeId) }
+        });
+        if (!employee)
+            throw new Error('Employee not found');
+        return this.prisma.contact.create({
+            data: {
+                staff_code: employee.staff_code,
+                temp_address: dto.temporaryAddress,
+                permant_address: dto.permanentAddress
+            }
+        });
+    }
+    async createCitizenId(employeeId, dto) {
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(employeeId) }
+        });
+        if (!employee)
+            throw new Error('Employee not found');
+        return this.prisma.citizen_id.create({
+            data: {
+                staff_code: employee.staff_code,
+                cccd: dto.cccd,
+                date_issue: dto.dateIssue ? new Date(dto.dateIssue) : null,
+                place_issue: dto.placeIssue,
+                image_front_cccd: dto.imageFront,
+                image_back_cccd: dto.imageBack
+            }
+        });
+    }
+    async createEducation(employeeId, dto) {
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(employeeId) }
+        });
+        if (!employee)
+            throw new Error('Employee not found');
+        return this.prisma.education.create({
+            data: {
+                staff_code: employee.staff_code,
+                degree: dto.degree,
+                institution: dto.institution,
+                major: dto.major,
+                year: dto.year,
+                attachment_image: dto.attachmentImage
+            }
+        });
+    }
+    async createTaxInsurance(employeeId, dto) {
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(employeeId) }
+        });
+        if (!employee)
+            throw new Error('Employee not found');
+        return this.prisma.tax_n_insurance.create({
+            data: {
+                staff_code: employee.staff_code,
+                social_insuran: dto.socialInsurance,
+                tax_code: dto.taxCode
+            }
+        });
+    }
+    async createResignInfo(employeeId, dto) {
+        const employee = await this.prisma.staff_info.findUnique({
+            where: { id: Number(employeeId) }
+        });
+        if (!employee)
+            throw new Error('Employee not found');
+        return this.prisma.resign_info.create({
+            data: {
+                staff_code: employee.staff_code,
+                leave_day: dto.leaveDay ? new Date(dto.leaveDay) : null,
+                items_employee: dto.itemsEmployee,
+                items_company: dto.itemsCompany,
+                social_insuran_detach: dto.socialInsuranceDetach,
+                terminate_decision: dto.terminateDecision,
+                tax_withhold_paper: dto.taxWithholdPaper
+            }
+        });
     }
 };
 exports.EmployeesRepository = EmployeesRepository;

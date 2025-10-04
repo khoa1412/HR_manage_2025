@@ -12,13 +12,14 @@ const employees_controller_1 = require("./employees.controller");
 const employees_service_1 = require("./employees.service");
 const employees_repository_1 = require("./employees.repository");
 const prisma_service_1 = require("../../database/prisma.service");
+const hr_role_guard_1 = require("../../auth/guards/hr-role.guard");
 let EmployeesModule = class EmployeesModule {
 };
 exports.EmployeesModule = EmployeesModule;
 exports.EmployeesModule = EmployeesModule = __decorate([
     (0, common_1.Module)({
         controllers: [employees_controller_1.EmployeesController],
-        providers: [employees_service_1.EmployeesService, employees_repository_1.EmployeesRepository, prisma_service_1.PrismaService],
+        providers: [employees_service_1.EmployeesService, employees_repository_1.EmployeesRepository, prisma_service_1.PrismaService, hr_role_guard_1.HrRoleGuard],
         exports: [employees_service_1.EmployeesService],
     })
 ], EmployeesModule);

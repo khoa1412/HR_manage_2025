@@ -1,11 +1,16 @@
 import { Injectable, ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { EmployeesRepository } from './employees.repository';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto } from './dto/create_dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { QueryEmployeeDto } from './dto/query-employee.dto';
-import { CreatePositionDto } from './dto/create-position.dto';
-import { CreateSalaryDto } from './dto/create-salary.dto';
-import { CreateBenefitDto } from './dto/create-benefit.dto';
+import { CreatePositionDto } from './dto/create_dto/create-position.dto';
+import { CreateSalaryDto } from './dto/create_dto/create-salary.dto';
+import { CreateContactDto } from './dto/create_dto/create-contact.dto';
+import { CreateCitizenIdDto } from './dto/create_dto/create-citizen.dto';
+import { CreateEducationDto } from './dto/create_dto/create-education.dto';
+import { CreateStaffAccDto } from './dto/create_dto/create-staff-acc.dto';
+import { CreateTaxInsuranceDto } from './dto/create_dto/create-tax-insurance.dto';
+import { CreateResignInfoDto } from './dto/create_dto/create-resign-info.dto';
 
 @Injectable()
 export class EmployeesService {
@@ -114,33 +119,7 @@ export class EmployeesService {
     return this.repo.getCurrentSalary(id);
   }
 
-  // Benefits
-  async listBenefits(id: string) {
-    return this.repo.listBenefits(id);
-  }
-  async addBenefit(id: string, dto: CreateBenefitDto) {
-    try {
-      return await this.repo.addBenefit(id, dto);
-    } catch (e: any) {
-      if (e?.constraint === 'ex_benefits_no_overlap') {
-        throw new ConflictException('Benefit period overlaps existing records');
-      }
-      throw e;
-    }
-  }
-  async updateBenefit(id: string, benefitId: string, dto: CreateBenefitDto) {
-    try {
-      return await this.repo.updateBenefit(id, benefitId, dto);
-    } catch (e: any) {
-      if (e?.constraint === 'ex_benefits_no_overlap') {
-        throw new ConflictException('Benefit period overlaps existing records');
-      }
-      throw e;
-    }
-  }
-  async deleteBenefit(id: string, benefitId: string) {
-    return this.repo.deleteBenefit(id, benefitId);
-  }
+  // Benefits APIs đã được xóa khỏi hệ thống
 
   // Contacts
   async listContacts(id: string) {
@@ -162,6 +141,48 @@ export class EmployeesService {
   }
   async deleteDocument(id: string, docId: string) {
     return this.repo.deleteDocument(id, docId);
+  }
+
+  // Staff Account Management (HR only)
+  async createStaffAccount(id: string, dto: CreateStaffAccDto) {
+    const employee = await this.repo.findBasicById(id);
+    if (!employee) throw new NotFoundException('Employee not found');
+    return this.repo.createStaffAccount(id, dto);
+  }
+
+  // Contact Information (HR only)
+  async createContact(id: string, dto: CreateContactDto) {
+    const employee = await this.repo.findBasicById(id);
+    if (!employee) throw new NotFoundException('Employee not found');
+    return this.repo.createContact(id, dto);
+  }
+
+  // Citizen ID Information (HR only)
+  async createCitizenId(id: string, dto: CreateCitizenIdDto) {
+    const employee = await this.repo.findBasicById(id);
+    if (!employee) throw new NotFoundException('Employee not found');
+    return this.repo.createCitizenId(id, dto);
+  }
+
+  // Education Records (HR only)
+  async createEducation(id: string, dto: CreateEducationDto) {
+    const employee = await this.repo.findBasicById(id);
+    if (!employee) throw new NotFoundException('Employee not found');
+    return this.repo.createEducation(id, dto);
+  }
+
+  // Tax & Insurance (HR only)
+  async createTaxInsurance(id: string, dto: CreateTaxInsuranceDto) {
+    const employee = await this.repo.findBasicById(id);
+    if (!employee) throw new NotFoundException('Employee not found');
+    return this.repo.createTaxInsurance(id, dto);
+  }
+
+  // Resignation Information (HR only)
+  async createResignInfo(id: string, dto: CreateResignInfoDto) {
+    const employee = await this.repo.findBasicById(id);
+    if (!employee) throw new NotFoundException('Employee not found');
+    return this.repo.createResignInfo(id, dto);
   }
 }
 

@@ -15,12 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmployeesController = void 0;
 const common_1 = require("@nestjs/common");
 const employees_service_1 = require("./employees.service");
-const create_employee_dto_1 = require("./dto/create-employee.dto");
+const hr_role_guard_1 = require("../../auth/guards/hr-role.guard");
+const create_employee_dto_1 = require("./dto/create_dto/create-employee.dto");
 const update_employee_dto_1 = require("./dto/update-employee.dto");
 const query_employee_dto_1 = require("./dto/query-employee.dto");
-const create_position_dto_1 = require("./dto/create-position.dto");
-const create_salary_dto_1 = require("./dto/create-salary.dto");
-const create_benefit_dto_1 = require("./dto/create-benefit.dto");
+const create_position_dto_1 = require("./dto/create_dto/create-position.dto");
+const create_salary_dto_1 = require("./dto/create_dto/create-salary.dto");
+const create_contact_dto_1 = require("./dto/create_dto/create-contact.dto");
+const create_citizen_dto_1 = require("./dto/create_dto/create-citizen.dto");
+const create_education_dto_1 = require("./dto/create_dto/create-education.dto");
+const create_staff_acc_dto_1 = require("./dto/create_dto/create-staff-acc.dto");
+const create_tax_insurance_dto_1 = require("./dto/create_dto/create-tax-insurance.dto");
+const create_resign_info_dto_1 = require("./dto/create_dto/create-resign-info.dto");
 let EmployeesController = class EmployeesController {
     constructor(service) {
         this.service = service;
@@ -84,18 +90,6 @@ let EmployeesController = class EmployeesController {
     async deleteSalary(id, salaryId) {
         return this.service.deleteSalary(id, salaryId);
     }
-    async listBenefits(id) {
-        return this.service.listBenefits(id);
-    }
-    async addBenefit(id, dto) {
-        return this.service.addBenefit(id, dto);
-    }
-    async updateBenefit(id, benefitId, dto) {
-        return this.service.updateBenefit(id, benefitId, dto);
-    }
-    async deleteBenefit(id, benefitId) {
-        return this.service.deleteBenefit(id, benefitId);
-    }
     async listContacts(id) {
         return this.service.listContacts(id);
     }
@@ -113,6 +107,24 @@ let EmployeesController = class EmployeesController {
     }
     async deleteDocument(id, docId) {
         return this.service.deleteDocument(id, docId);
+    }
+    async createStaffAccount(id, dto) {
+        return this.service.createStaffAccount(id, dto);
+    }
+    async createContact(id, dto) {
+        return this.service.createContact(id, dto);
+    }
+    async createCitizenId(id, dto) {
+        return this.service.createCitizenId(id, dto);
+    }
+    async createEducation(id, dto) {
+        return this.service.createEducation(id, dto);
+    }
+    async createTaxInsurance(id, dto) {
+        return this.service.createTaxInsurance(id, dto);
+    }
+    async createResignInfo(id, dto) {
+        return this.service.createResignInfo(id, dto);
     }
 };
 exports.EmployeesController = EmployeesController;
@@ -139,6 +151,7 @@ __decorate([
 ], EmployeesController.prototype, "get", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_employee_dto_1.CreateEmployeeDto]),
@@ -177,6 +190,7 @@ __decorate([
 ], EmployeesController.prototype, "listPositions", null);
 __decorate([
     (0, common_1.Post)(':id/positions'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -216,6 +230,7 @@ __decorate([
 ], EmployeesController.prototype, "currentSalary", null);
 __decorate([
     (0, common_1.Post)(':id/salaries'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -239,38 +254,6 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], EmployeesController.prototype, "deleteSalary", null);
-__decorate([
-    (0, common_1.Get)(':id/benefits'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], EmployeesController.prototype, "listBenefits", null);
-__decorate([
-    (0, common_1.Post)(':id/benefits'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, create_benefit_dto_1.CreateBenefitDto]),
-    __metadata("design:returntype", Promise)
-], EmployeesController.prototype, "addBenefit", null);
-__decorate([
-    (0, common_1.Patch)(':id/benefits/:benefitId'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Param)('benefitId')),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, create_benefit_dto_1.CreateBenefitDto]),
-    __metadata("design:returntype", Promise)
-], EmployeesController.prototype, "updateBenefit", null);
-__decorate([
-    (0, common_1.Delete)(':id/benefits/:benefitId'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Param)('benefitId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], EmployeesController.prototype, "deleteBenefit", null);
 __decorate([
     (0, common_1.Get)(':id/contacts'),
     __param(0, (0, common_1.Param)('id')),
@@ -317,6 +300,60 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], EmployeesController.prototype, "deleteDocument", null);
+__decorate([
+    (0, common_1.Post)(':id/staff-account'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_staff_acc_dto_1.CreateStaffAccDto]),
+    __metadata("design:returntype", Promise)
+], EmployeesController.prototype, "createStaffAccount", null);
+__decorate([
+    (0, common_1.Post)(':id/contact'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_contact_dto_1.CreateContactDto]),
+    __metadata("design:returntype", Promise)
+], EmployeesController.prototype, "createContact", null);
+__decorate([
+    (0, common_1.Post)(':id/citizen-id'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_citizen_dto_1.CreateCitizenIdDto]),
+    __metadata("design:returntype", Promise)
+], EmployeesController.prototype, "createCitizenId", null);
+__decorate([
+    (0, common_1.Post)(':id/education'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_education_dto_1.CreateEducationDto]),
+    __metadata("design:returntype", Promise)
+], EmployeesController.prototype, "createEducation", null);
+__decorate([
+    (0, common_1.Post)(':id/tax-insurance'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_tax_insurance_dto_1.CreateTaxInsuranceDto]),
+    __metadata("design:returntype", Promise)
+], EmployeesController.prototype, "createTaxInsurance", null);
+__decorate([
+    (0, common_1.Post)(':id/resign-info'),
+    (0, common_1.UseGuards)(hr_role_guard_1.HrRoleGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_resign_info_dto_1.CreateResignInfoDto]),
+    __metadata("design:returntype", Promise)
+], EmployeesController.prototype, "createResignInfo", null);
 exports.EmployeesController = EmployeesController = __decorate([
     (0, common_1.Controller)('employees'),
     __metadata("design:paramtypes", [employees_service_1.EmployeesService])

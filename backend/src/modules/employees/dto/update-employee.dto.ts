@@ -12,26 +12,13 @@ export class UpdateEmployeeDto {
   @IsOptional() @IsString() cccdIssuePlace?: string;
   @IsOptional() @IsString() maritalStatus?: string;
   
-  // Thông tin liên hệ
-  @IsOptional() @IsString() temporaryAddress?: string;
-  @IsOptional() @IsString() permanentAddress?: string;
+  // Thông tin liên hệ (bảng contact riêng) → không nằm trong DTO này
   
-  // Thông tin liên hệ khẩn cấp
-  @IsOptional() @IsString() emergencyContactName?: string;
-  @IsOptional() @IsString() emergencyContactRelation?: string;
-  @IsOptional() @IsString() emergencyContactPhone?: string;
+  // Thông tin liên hệ khẩn cấp (bảng emergency_contact riêng) → không nằm trong DTO này
   
-  // Thông tin học vấn
-  @IsOptional() @IsString() highestDegree?: string;
-  @IsOptional() @IsString() university?: string;
-  @IsOptional() @IsString() major?: string;
-  @IsOptional() @IsString() otherCertificates?: string;
-  @IsOptional() @IsString() languages?: string;
-  @IsOptional() @IsString() languageLevel?: string;
+  // Thông tin học vấn/chứng chỉ (bảng education/certifications riêng) → không nằm trong DTO này
   
-  // Thông tin Thuế - BHXH
-  @IsOptional() @IsString() socialInsuranceCode?: string;
-  @IsOptional() @IsString() taxCode?: string;
+  // Thuế/BHXH (bảng tax_n_insurance riêng) → không nằm trong DTO này
   
   // Thông tin công việc
   // Các trường công việc/phúc lợi tách bảng riêng trong schema mới → bỏ khỏi DTO update staff_info

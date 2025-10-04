@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { QueryEmployeeDto } from './dto/query-employee.dto';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { CreateEmployeeDto } from './dto/create_dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { CreatePositionDto } from './dto/create-position.dto';
-import { CreateSalaryDto } from './dto/create-salary.dto';
-import { CreateBenefitDto } from './dto/create-benefit.dto';
+import { CreatePositionDto } from './dto/create_dto/create-position.dto';
+import { CreateSalaryDto } from './dto/create_dto/create-salary.dto';
+import { CreateContactDto } from './dto/create_dto/create-contact.dto';
+import { CreateCitizenIdDto } from './dto/create_dto/create-citizen.dto';
+import { CreateEducationDto } from './dto/create_dto/create-education.dto';
+import { CreateStaffAccDto } from './dto/create_dto/create-staff-acc.dto';
+import { CreateTaxInsuranceDto } from './dto/create_dto/create-tax-insurance.dto';
+import { CreateResignInfoDto } from './dto/create_dto/create-resign-info.dto';
 import { Prisma } from '../../../generated/prisma';
 
 @Injectable()
@@ -304,21 +309,7 @@ export class EmployeesRepository {
     return salaries[0] || null;
   }
 
-  async listBenefits(id: string) {
-    return [];
-  }
-
-  async addBenefit(employeeId: string, dto: CreateBenefitDto) {
-    return { success: false } as any;
-  }
-
-  async updateBenefit(id: string, benefitId: string, dto: CreateBenefitDto) {
-    return { success: false } as any;
-  }
-
-  async deleteBenefit(id: string, benefitId: string) {
-    return { success: false } as any;
-  }
+  // Benefits APIs đã được xóa khỏi hệ thống
 
   async listContacts(id: string) {
     const staff = await this.prisma.staff_info.findUnique({ where: { id: Number(id) }, include: { contact: true, emergency_contact: true } });
@@ -396,5 +387,113 @@ export class EmployeesRepository {
 
   async getBenefitTypes() {
     return [];
+  }
+
+  // Staff Account Management (HR only)
+  async createStaffAccount(employeeId: string, dto: CreateStaffAccDto) {
+    const employee = await this.prisma.staff_info.findUnique({
+      where: { id: Number(employeeId) }
+    });
+    if (!employee) throw new Error('Employee not found');
+
+    return this.prisma.staff_acc.create({
+      data: {
+        staff_name: dto.staffName,
+        role: dto.role,
+        acc_name: dto.accName,
+        password_hash: dto.passwordHash,
+        staff_code: employee.staff_code
+      }
+    });
+  }
+
+  // Contact Information (HR only)
+  async createContact(employeeId: string, dto: CreateContactDto) {
+    const employee = await this.prisma.staff_info.findUnique({
+      where: { id: Number(employeeId) }
+    });
+    if (!employee) throw new Error('Employee not found');
+
+    return this.prisma.contact.create({
+      data: {
+        staff_code: employee.staff_code,
+        temp_address: dto.temporaryAddress,
+        permant_address: dto.permanentAddress
+      }
+    });
+  }
+
+  // Citizen ID Information (HR only)
+  async createCitizenId(employeeId: string, dto: CreateCitizenIdDto) {
+    const employee = await this.prisma.staff_info.findUnique({
+      where: { id: Number(employeeId) }
+    });
+    if (!employee) throw new Error('Employee not found');
+
+    return this.prisma.citizen_id.create({
+      data: {
+        staff_code: employee.staff_code,
+        cccd: dto.cccd,
+        date_issue: dto.dateIssue ? new Date(dto.dateIssue) : null,
+        place_issue: dto.placeIssue,
+        image_front_cccd: dto.imageFront,
+        image_back_cccd: dto.imageBack
+      }
+    });
+  }
+
+  // Education Records (HR only)
+  async createEducation(employeeId: string, dto: CreateEducationDto) {
+    const employee = await this.prisma.staff_info.findUnique({
+      where: { id: Number(employeeId) }
+    });
+    if (!employee) throw new Error('Employee not found');
+
+    return this.prisma.education.create({
+      data: {
+        staff_code: employee.staff_code,
+        degree: dto.degree,
+        institution: dto.institution,
+        major: dto.major,
+        year: dto.year,
+        attachment_image: dto.attachmentImage
+      }
+    });
+  }
+
+  // Tax & Insurance (HR only)
+  async createTaxInsurance(employeeId: string, dto: CreateTaxInsuranceDto) {
+    const employee = await this.prisma.staff_info.findUnique({
+      where: { id: Number(employeeId) }
+    });
+    if (!employee) throw new Error('Employee not found');
+
+    return this.prisma.tax_n_insurance.create({
+      data: {
+        staff_code: employee.staff_code,
+        social_insuran: dto.socialInsurance,
+        tax_code: dto.taxCode
+      }
+    });
+  }
+
+  // Resignation Information (HR only)
+  async createResignInfo(employeeId: string, dto: CreateResignInfoDto) {
+    const employee = await this.prisma.staff_info.findUnique({
+      where: { id: Number(employeeId) }
+    });
+    if (!employee) throw new Error('Employee not found');
+
+    return this.prisma.resign_info.create({
+      data: {
+        staff_code: employee.staff_code,
+        leave_day: dto.leaveDay ? new Date(dto.leaveDay) : null,
+        items_employee: dto.itemsEmployee,
+        items_company: dto.itemsCompany,
+        social_insuran_detach: dto.socialInsuranceDetach,
+        terminate_decision: dto.terminateDecision,
+        tax_withhold_paper: dto.taxWithholdPaper
+      }
+    });
   }
 }

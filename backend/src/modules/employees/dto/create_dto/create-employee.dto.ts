@@ -12,9 +12,7 @@ export class CreateEmployeeDto {
   @IsOptional() @IsString() cccdIssuePlace?: string;
   @IsOptional() @IsString() maritalStatus?: string;
   
-  // Thông tin liên hệ
-  @IsOptional() @IsString() temporaryAddress?: string;
-  @IsOptional() @IsString() permanentAddress?: string;
+  // Thông tin liên hệ (bảng contact riêng) → không nằm trong DTO này
   
   // Thông tin liên hệ khẩn cấp (bảng riêng emergency_contact) → không nằm trong DTO này
   

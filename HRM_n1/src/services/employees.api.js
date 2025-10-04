@@ -31,10 +31,6 @@ export const createSalary = (id, payload) => http.post(`/employees/${id}/salarie
 export const updateSalary = (id, salaryId, payload) => http.patch(`/employees/${id}/salaries/${salaryId}`, payload)
 export const deleteSalary = (id, salaryId) => http.del(`/employees/${id}/salaries/${salaryId}`)
 
-// Benefits
-export const listBenefits = (id) => http.get(`/employees/${id}/benefits`)
-export const createBenefit = (id, payload) => http.post(`/employees/${id}/benefits`, payload)
-export const updateBenefit = (id, benefitId, payload) => http.patch(`/employees/${id}/benefits/${benefitId}`, payload)
-export const deleteBenefit = (id, benefitId) => http.del(`/employees/${id}/benefits/${benefitId}`)
+// Benefits APIs đã được xóa khỏi hệ thống
 
 

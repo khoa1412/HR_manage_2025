@@ -117,34 +117,6 @@ let EmployeesService = class EmployeesService {
     async getCurrentSalary(id) {
         return this.repo.getCurrentSalary(id);
     }
-    async listBenefits(id) {
-        return this.repo.listBenefits(id);
-    }
-    async addBenefit(id, dto) {
-        try {
-            return await this.repo.addBenefit(id, dto);
-        }
-        catch (e) {
-            if (e?.constraint === 'ex_benefits_no_overlap') {
-                throw new common_1.ConflictException('Benefit period overlaps existing records');
-            }
-            throw e;
-        }
-    }
-    async updateBenefit(id, benefitId, dto) {
-        try {
-            return await this.repo.updateBenefit(id, benefitId, dto);
-        }
-        catch (e) {
-            if (e?.constraint === 'ex_benefits_no_overlap') {
-                throw new common_1.ConflictException('Benefit period overlaps existing records');
-            }
-            throw e;
-        }
-    }
-    async deleteBenefit(id, benefitId) {
-        return this.repo.deleteBenefit(id, benefitId);
-    }
     async listContacts(id) {
         return this.repo.listContacts(id);
     }
@@ -162,6 +134,42 @@ let EmployeesService = class EmployeesService {
     }
     async deleteDocument(id, docId) {
         return this.repo.deleteDocument(id, docId);
+    }
+    async createStaffAccount(id, dto) {
+        const employee = await this.repo.findBasicById(id);
+        if (!employee)
+            throw new common_1.NotFoundException('Employee not found');
+        return this.repo.createStaffAccount(id, dto);
+    }
+    async createContact(id, dto) {
+        const employee = await this.repo.findBasicById(id);
+        if (!employee)
+            throw new common_1.NotFoundException('Employee not found');
+        return this.repo.createContact(id, dto);
+    }
+    async createCitizenId(id, dto) {
+        const employee = await this.repo.findBasicById(id);
+        if (!employee)
+            throw new common_1.NotFoundException('Employee not found');
+        return this.repo.createCitizenId(id, dto);
+    }
+    async createEducation(id, dto) {
+        const employee = await this.repo.findBasicById(id);
+        if (!employee)
+            throw new common_1.NotFoundException('Employee not found');
+        return this.repo.createEducation(id, dto);
+    }
+    async createTaxInsurance(id, dto) {
+        const employee = await this.repo.findBasicById(id);
+        if (!employee)
+            throw new common_1.NotFoundException('Employee not found');
+        return this.repo.createTaxInsurance(id, dto);
+    }
+    async createResignInfo(id, dto) {
+        const employee = await this.repo.findBasicById(id);
+        if (!employee)
+            throw new common_1.NotFoundException('Employee not found');
+        return this.repo.createResignInfo(id, dto);
     }
 };
 exports.EmployeesService = EmployeesService;

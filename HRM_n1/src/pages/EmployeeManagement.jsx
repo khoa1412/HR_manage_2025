@@ -17,8 +17,7 @@ import {
   Upload,
   SortAsc,
   SortDesc,
-  DollarSign,
-  Gift
+  DollarSign
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { deleteEmployee as delEmp } from '../services/employees.api'
@@ -29,7 +28,7 @@ import BulkActions from '../components/BulkActions'
 import StatusBadge from '../components/StatusBadge'
 import StatusChangeModal from '../components/StatusChangeModal'
 import PayslipModal from '../components/PayslipModal'
-import EmployeeBenefitsManager from '../components/EmployeeBenefitsManager'
+// EmployeeBenefitsManager đã được xóa khỏi hệ thống
 
 export default function EmployeeManagement() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -50,8 +49,7 @@ export default function EmployeeManagement() {
   const [statusChangingEmployee, setStatusChangingEmployee] = useState(null)
   const [showPayslipModal, setShowPayslipModal] = useState(false)
   const [payslipEmployee, setPayslipEmployee] = useState(null)
-  const [showBenefitsManager, setShowBenefitsManager] = useState(false)
-  const [benefitsEmployee, setBenefitsEmployee] = useState(null)
+  // Benefits management đã được xóa khỏi hệ thống
 
   useEffect(() => {
     loadData()
@@ -233,10 +231,7 @@ export default function EmployeeManagement() {
     setShowPayslipModal(true)
   }
 
-  const handleManageBenefits = (employee) => {
-    setBenefitsEmployee(employee)
-    setShowBenefitsManager(true)
-  }
+  // handleManageBenefits đã được xóa khỏi hệ thống
 
   const handleStatusUpdate = async (updatedEmployee) => {
     try {
@@ -622,13 +617,7 @@ export default function EmployeeManagement() {
                 >
                   <DollarSign className="h-4 w-4" />
                 </button>
-                <button 
-                  onClick={() => handleManageBenefits(employee)}
-                  className="p-2 text-gray-400 hover:text-purple-600 transition-colors"
-                  title="Quản lý phúc lợi"
-                >
-                  <Gift className="h-4 w-4" />
-                </button>
+                {/* Benefits management button đã được xóa */}
                 <button 
                   onClick={() => handleDelete(employee.id)}
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors"
@@ -779,13 +768,7 @@ export default function EmployeeManagement() {
                         >
                           <DollarSign className="h-4 w-4" />
                         </button>
-                        <button 
-                          onClick={() => handleManageBenefits(employee)}
-                          className="p-1 text-gray-400 hover:text-purple-600 transition-colors"
-                          title="Quản lý phúc lợi"
-                        >
-                          <Gift className="h-4 w-4" />
-                        </button>
+                        {/* Benefits management button đã được xóa */}
                         <button 
                           onClick={() => handleDelete(employee.id)}
                           className="p-1 text-gray-400 hover:text-red-600 transition-colors"
@@ -844,19 +827,7 @@ export default function EmployeeManagement() {
         />
       )}
 
-      {showBenefitsManager && benefitsEmployee && (
-        <EmployeeBenefitsManager
-          employee={benefitsEmployee}
-          onClose={() => {
-            setShowBenefitsManager(false)
-            setBenefitsEmployee(null)
-          }}
-          onUpdate={() => {
-            // Reload employee data if needed
-            loadData()
-          }}
-        />
-      )}
+      {/* EmployeeBenefitsManager modal đã được xóa khỏi hệ thống */}
     </div>
   )
 }

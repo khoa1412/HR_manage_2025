@@ -1,12 +1,18 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { SelfOrRoleGuard } from '../../auth/guards/self-or-role.guard';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { HrRoleGuard } from '../../auth/guards/hr-role.guard';
+import { CreateEmployeeDto } from './dto/create_dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { QueryEmployeeDto } from './dto/query-employee.dto';
-import { CreatePositionDto } from './dto/create-position.dto';
-import { CreateSalaryDto } from './dto/create-salary.dto';
-import { CreateBenefitDto } from './dto/create-benefit.dto';
+import { CreatePositionDto } from './dto/create_dto/create-position.dto';
+import { CreateSalaryDto } from './dto/create_dto/create-salary.dto';
+import { CreateContactDto } from './dto/create_dto/create-contact.dto';
+import { CreateCitizenIdDto } from './dto/create_dto/create-citizen.dto';
+import { CreateEducationDto } from './dto/create_dto/create-education.dto';
+import { CreateStaffAccDto } from './dto/create_dto/create-staff-acc.dto';
+import { CreateTaxInsuranceDto } from './dto/create_dto/create-tax-insurance.dto';
+import { CreateResignInfoDto } from './dto/create_dto/create-resign-info.dto';
 
 @Controller('employees')
 // @UseGuards(SelfOrRoleGuard)
@@ -41,6 +47,7 @@ export class EmployeesController {
   }
 
   @Post()
+  @UseGuards(HrRoleGuard)
   async create(@Body() dto: CreateEmployeeDto) {
     return this.service.create(dto);
   }
@@ -67,6 +74,7 @@ export class EmployeesController {
   }
 
   @Post(':id/positions')
+  @UseGuards(HrRoleGuard)
   async addPosition(@Param('id') id: string, @Body() dto: CreatePositionDto) {
     return this.service.addPosition(id, dto);
   }
@@ -97,6 +105,7 @@ export class EmployeesController {
   }
 
   @Post(':id/salaries')
+  @UseGuards(HrRoleGuard)
   async addSalary(@Param('id') id: string, @Body() dto: CreateSalaryDto) {
     return this.service.addSalary(id, dto);
   }
@@ -115,30 +124,7 @@ export class EmployeesController {
     return this.service.deleteSalary(id, salaryId);
   }
 
-  // Benefits
-  @Get(':id/benefits')
-  async listBenefits(@Param('id') id: string) {
-    return this.service.listBenefits(id);
-  }
-
-  @Post(':id/benefits')
-  async addBenefit(@Param('id') id: string, @Body() dto: CreateBenefitDto) {
-    return this.service.addBenefit(id, dto);
-  }
-
-  @Patch(':id/benefits/:benefitId')
-  async updateBenefit(
-    @Param('id') id: string,
-    @Param('benefitId') benefitId: string,
-    @Body() dto: CreateBenefitDto,
-  ) {
-    return this.service.updateBenefit(id, benefitId, dto);
-  }
-
-  @Delete(':id/benefits/:benefitId')
-  async deleteBenefit(@Param('id') id: string, @Param('benefitId') benefitId: string) {
-    return this.service.deleteBenefit(id, benefitId);
-  }
+  // Benefits APIs đã được xóa khỏi hệ thống
 
   // Contacts
   @Get(':id/contacts')
@@ -176,6 +162,48 @@ export class EmployeesController {
   @Delete(':id/documents/:docId')
   async deleteDocument(@Param('id') id: string, @Param('docId') docId: string) {
     return this.service.deleteDocument(id, docId);
+  }
+
+  // Staff Account Management (HR only)
+  @Post(':id/staff-account')
+  @UseGuards(HrRoleGuard)
+  async createStaffAccount(@Param('id') id: string, @Body() dto: CreateStaffAccDto) {
+    return this.service.createStaffAccount(id, dto);
+  }
+
+  // Contact Information (HR only)
+  @Post(':id/contact')
+  @UseGuards(HrRoleGuard)
+  async createContact(@Param('id') id: string, @Body() dto: CreateContactDto) {
+    return this.service.createContact(id, dto);
+  }
+
+  // Citizen ID Information (HR only)
+  @Post(':id/citizen-id')
+  @UseGuards(HrRoleGuard)
+  async createCitizenId(@Param('id') id: string, @Body() dto: CreateCitizenIdDto) {
+    return this.service.createCitizenId(id, dto);
+  }
+
+  // Education Records (HR only)
+  @Post(':id/education')
+  @UseGuards(HrRoleGuard)
+  async createEducation(@Param('id') id: string, @Body() dto: CreateEducationDto) {
+    return this.service.createEducation(id, dto);
+  }
+
+  // Tax & Insurance (HR only)
+  @Post(':id/tax-insurance')
+  @UseGuards(HrRoleGuard)
+  async createTaxInsurance(@Param('id') id: string, @Body() dto: CreateTaxInsuranceDto) {
+    return this.service.createTaxInsurance(id, dto);
+  }
+
+  // Resignation Information (HR only)
+  @Post(':id/resign-info')
+  @UseGuards(HrRoleGuard)
+  async createResignInfo(@Param('id') id: string, @Body() dto: CreateResignInfoDto) {
+    return this.service.createResignInfo(id, dto);
   }
 }
 
